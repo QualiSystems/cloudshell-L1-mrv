@@ -1,6 +1,6 @@
 from cloudshell.layer_one.core.driver_commands_interface import DriverCommandsInterface
 from cloudshell.layer_one.core.response.response_info import ResourceDescriptionResponseInfo
-from mrv.autoload.resource_info_builder import ResourceInfoBuilder
+from mrv.autoload.resource_description import ResourceDescription
 from mrv.command_actions.autoload_actions import AutoloadActions
 from mrv.command_actions.system_actions import SystemActions
 
@@ -25,7 +25,7 @@ class MrvDriverCommands(DriverCommandsInterface):
             slot_table = autoload_actions.slot_table()
             port_table = autoload_actions.port_table()
             response_info = ResourceDescriptionResponseInfo(
-                ResourceInfoBuilder(address, chassis_table, slot_table, port_table))
+                ResourceDescription(address, chassis_table, slot_table, port_table).build())
         return response_info
 
     def map_clear(self, src_port, dst_port):
