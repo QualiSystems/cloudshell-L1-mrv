@@ -21,11 +21,6 @@ a = Analysis(['main.py'],
              binaries=None,
              datas=[],
              hiddenimports=[
-                "common.cli.tcp_session",
-                "common.cli.telnet_session",
-                "common.cli.console_session",
-                "common.cli.ssh_session",
-                "mrv.driver_handler"
              ],
              hookspath=None,
              runtime_hooks=None,
@@ -38,7 +33,8 @@ pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
 exe = EXE(pyz,
           a.scripts,
-          a.binaries + add_data_files("configuration") + add_data_files("common/response_template", CS_L1_NETCORE) ,
+          a.binaries + add_data_files("cloudshell/layer_one/core/response/resource_info/templates", CS_L1_NETCORE) ,
+          add_data_files("cloudshell/layer_one/core/response/templates", CS_L1_NETCORE),
           a.zipfiles,
           a.datas,
           name='Mrv',

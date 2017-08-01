@@ -48,7 +48,6 @@ class ResourceDescription(object):
         return blades_dict
 
     # Build ports
-
     @staticmethod
     def _port_key(chassis_id, slot_id, port_id):
         return '{0}.{1}.{2}'.format(chassis_id, slot_id, port_id)
@@ -81,6 +80,7 @@ class ResourceDescription(object):
                 port.set_parent_resource(blade)
         return ports_dict
 
+    # Mappings
     def _build_ports_mappings(self, ports_dict):
         for src_key, dst_key in self._mapping_table.iteritems():
             src_port = ports_dict.get(src_key)
