@@ -7,6 +7,8 @@ from cloudshell.layer_one.core.response.resource_info.entities.port import Port
 
 
 class ResourceDescription(object):
+    IGNORE_BLADES = ['EM316LNXNM-MCC']
+
     def __init__(self, address, chassis_table, slot_table, port_table):
         self._address = address
         self._chassis_table = chassis_table
@@ -42,7 +44,7 @@ class ResourceDescription(object):
             blade_index = record.get('nbsCmmcSlotIndex')
             model_name = record.get('nbsCmmcSlotModel')
             serial_number = record.get('nbsCmmcSlotSerialNum')
-            if model_name.lower() != 'n/a':
+            if model_name.lower() != 'n/a' and model_name not in self.IGNORE_BLADES:
                 blade = Blade(blade_index, model_name, serial_number)
                 blades_dict[self._blade_key(chassis_index, blade_index)] = blade
                 chassis = chassis_dict.get(self._chassis_key(chassis_index))
