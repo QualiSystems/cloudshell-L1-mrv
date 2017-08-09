@@ -1,4 +1,6 @@
-import os
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import sys
 
 from cloudshell.core.logger.qs_logger import get_qs_logger
@@ -8,7 +10,7 @@ from mrv.mrv_command_executor import MrvCommandExecutor
 if __name__ == '__main__':
     print 'Argument List: ', str(sys.argv)
 
-    driver_name = 'MRV L1 Generic driver'
+    driver_name = 'MRV_MCC'
 
     # os.environ['LOG_PATH'] = os.path.join(os.path.dirname(sys.argv[0]), '..', 'Logs')
     xml_logger = get_qs_logger(log_group=driver_name,
