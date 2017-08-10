@@ -39,10 +39,10 @@ class MrvDriverCommands(DriverCommandsInterface):
                 ResourceDescription(address, chassis_table, slot_table, port_table).build())
         return response_info
 
-    def map_clear(self, src_port, dst_port):
+    def map_clear(self, ports):
         with self._cli_handler.config_mode_service() as session:
             mapping_actions = MappingActions(session, self._logger)
-            mapping_actions.map_clear(self._reformat_port(src_port))
+            mapping_actions.map_clear(self._reformat_port(ports))
 
     def login(self, address, username, password):
         self._cli_handler.define_session_attributes(address, username, password)
@@ -54,4 +54,3 @@ class MrvDriverCommands(DriverCommandsInterface):
         with self._cli_handler.config_mode_service() as session:
             mapping_actions = MappingActions(session, self._logger)
             mapping_actions.map_clear_to(self._reformat_port(src_port), self._reformat_port(dst_port))
-
