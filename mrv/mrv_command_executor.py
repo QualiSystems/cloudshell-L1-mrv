@@ -39,7 +39,7 @@ class MrvCommandExecutor(CommandExecutor):
         :return:
         :rtype: CommandResponse
         """
-        self._state_id = command_request.command_params.get('StateId')
+        self._state_id = command_request.command_params.get('StateId')[0]
         with CommandResponseManager(command_request, self._logger) as command_response:
             pass
         return command_response
