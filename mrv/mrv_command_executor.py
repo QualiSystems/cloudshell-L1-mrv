@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from cloudshell.layer_one.core.command_executor import CommandExecutor, CommandResponseManager
-from cloudshell.layer_one.core.response.response_info import KeyValueResponseInfo
 from mrv.cli.mrv_cli_handler import MrvCliHandler
+from mrv.response.mrv_response_info import GetStateIdResponseInfo
 from mrv_driver_commands import MrvDriverCommands
 
 
@@ -27,7 +27,7 @@ class MrvCommandExecutor(CommandExecutor):
         :rtype: CommandResponse
         """
         with CommandResponseManager(command_request, self._logger) as command_response:
-            command_response.response_info = KeyValueResponseInfo({'StateId': self._state_id})
+            command_response.response_info = GetStateIdResponseInfo(self._state_id)
         return command_response
 
     def set_state_id_executor(self, command_request, driver_instance):
