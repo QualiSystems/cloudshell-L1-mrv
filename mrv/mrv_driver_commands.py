@@ -42,7 +42,8 @@ class MrvDriverCommands(DriverCommandsInterface):
     def map_clear(self, ports):
         with self._cli_handler.config_mode_service() as session:
             mapping_actions = MappingActions(session, self._logger)
-            mapping_actions.map_clear(self._reformat_port(ports))
+            _ports = [self._reformat_port(port) for port in ports]
+            mapping_actions.map_clear(_ports)
 
     def login(self, address, username, password):
         self._cli_handler.define_session_attributes(address, username, password)
