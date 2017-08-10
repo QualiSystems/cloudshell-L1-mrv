@@ -5,6 +5,7 @@ from cloudshell.layer_one.core.driver_commands_interface import DriverCommandsIn
 from cloudshell.layer_one.core.response.response_info import ResourceDescriptionResponseInfo
 from mrv.autoload.resource_description import ResourceDescription
 from mrv.command_actions.autoload_actions import AutoloadActions
+from mrv.command_actions.mapping_actions import MappingActions
 from mrv.command_actions.system_actions import SystemActions
 
 
@@ -18,8 +19,15 @@ class MrvDriverCommands(DriverCommandsInterface):
         self._cli_handler = cli_handler
         self._logger = logger
 
+    @staticmethod
+    def _reformat_port(port):
+        _port = port.split('/')
+        return '1.{0}.{1}'.format(_port[1], _port[2])
+
     def map_bidi(self, src_port, dst_port):
-        pass
+        with self._cli_handler.config_mode_service() as session:
+            mapping_actions = MappingActions(session, self._logger)
+            mapping_actions.map_bidi(self._reformat_port(src_port), self._reformat_port(dst_port))
 
     def get_resource_description(self, address):
         with self._cli_handler.default_mode_service() as session:
@@ -32,7 +40,9 @@ class MrvDriverCommands(DriverCommandsInterface):
         return response_info
 
     def map_clear(self, src_port, dst_port):
-        pass
+        with self._cli_handler.config_mode_service() as session:
+            mapping_actions = MappingActions(session, self._logger)
+            mapping_actions.map_clear(self._reformat_port(src_port))
 
     def login(self, address, username, password):
         self._cli_handler.define_session_attributes(address, username, password)
@@ -41,4 +51,7 @@ class MrvDriverCommands(DriverCommandsInterface):
             self._logger.info(system_actions.device_info())
 
     def map_clear_to(self, src_port, dst_port):
-        pass
+        with self._cli_handler.config_mode_service() as session:
+            mapping_actions = MappingActions(session, self._logger)
+            mapping_actions.map_clear_to(self._reformat_port(src_port), self._reformat_port(dst_port))
+

@@ -39,3 +39,24 @@ class MappingActions(object):
         output = CommandTemplateExecutor(self._cli_service, command_template.MAP_UNI).execute_command(
             src_port=src_port, dst_port=dst_port)
         return output
+
+    def map_clear(self, src_port):
+        """
+        Clear bidirectional mapping
+        :param src_port: 
+        :return: 
+        """
+        output = CommandTemplateExecutor(self._cli_service, command_template.MAP_CLEAR).execute_command(
+            src_port=src_port)
+        return output
+
+    def map_clear_to(self, src_port, dst_port):
+        """
+        Clear bidirectional mapping
+        :param src_port: 
+        :param dst_port
+        :return: 
+        """
+        output = CommandTemplateExecutor(self._cli_service, command_template.MAP_CLEAR_TO).execute_command(
+            src_port=src_port, dst_port=dst_port)
+        return output
