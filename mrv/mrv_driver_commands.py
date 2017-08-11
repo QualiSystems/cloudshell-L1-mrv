@@ -29,6 +29,11 @@ class MrvDriverCommands(DriverCommandsInterface):
             mapping_actions = MappingActions(session, self._logger)
             mapping_actions.map_bidi(self._reformat_port(src_port), self._reformat_port(dst_port))
 
+    def map_uni(self, src_port, dst_port):
+        with self._cli_handler.config_mode_service() as session:
+            mapping_actions = MappingActions(session, self._logger)
+            mapping_actions.map_uni(self._reformat_port(src_port), self._reformat_port(dst_port))
+
     def get_resource_description(self, address):
         with self._cli_handler.default_mode_service() as session:
             autoload_actions = AutoloadActions(session, self._logger)
