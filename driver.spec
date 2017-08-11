@@ -17,14 +17,14 @@ def add_data_files(related_path, root_path="."):
     return templates
 
 a = Analysis(['main.py'],
-             pathex=["C:\Dev\test_env\cloudshell-core", "C:\Dev\test_env\cloudshell-cli",
-             "C:\Dev\test_env\cloudshell-L1-networking-core", "C:\Dev\test_env\cloudshell-L1-mrv"],
+             pathex=["C:\Github\MRV\cloudshell-core", "C:\Github\MRV\cloudshell-cli",
+             "C:\Github\MRV\cloudshell-L1-networking-core", "C:\Github\MRV\cloudshell-L1-mrv"],
              binaries=None,
              datas=PyInstaller.utils.hooks.collect_data_files('cloudshell.core.logger') + \
              PyInstaller.utils.hooks.collect_data_files('mrv'),
              hiddenimports=PyInstaller.utils.hooks.collect_submodules('cloudshell-cli') + \
              PyInstaller.utils.hooks.collect_submodules('paramiko') + [
-                "mrv.*"
+                "mrv"
              ] + PyInstaller.utils.hooks.collect_submodules('cloudshell'),
              hookspath=["..\cloudshell-cli\."],
              runtime_hooks=None,
@@ -40,7 +40,7 @@ exe = EXE(pyz,
           a.binaries + add_data_files("cloudshell/layer_one/core/response/templates", CS_L1_NETCORE) + add_data_files("cloudshell/layer_one/core/response/resource_info/templates", CS_L1_NETCORE),
           a.zipfiles,
           a.datas,
-          name='mrv',
+          name='MRV_MCC_41007',
           debug=False,
           strip=None,
           upx=True,
