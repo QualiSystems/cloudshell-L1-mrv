@@ -10,8 +10,7 @@ from cloudshell.layer_one.core.helper.xml_logger import XMLLogger
 from mrv.mrv_command_executor import MrvCommandExecutor
 
 if __name__ == '__main__':
-
-    driver_name = 'MRV_MCC'
+    driver_name = 'MRV_MCC_GENERIC'
 
     log_path = os.path.join(os.path.dirname(sys.argv[0]), '..', 'Logs')
     os.environ['LOG_PATH'] = log_path
@@ -24,8 +23,4 @@ if __name__ == '__main__':
 
     command_executor = MrvCommandExecutor(command_logger)
     server = DriverListener(command_executor, xml_logger, command_logger)
-    if len(sys.argv) > 1:
-        port = sys.argv[1]
-    else:
-        port = None
-    server.start_listening(port=port)
+    server.start_listening(port=sys.argv[1] if len(sys.argv) > 1 else None)

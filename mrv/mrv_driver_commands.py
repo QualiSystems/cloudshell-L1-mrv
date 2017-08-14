@@ -1,12 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import re
 
 from cloudshell.layer_one.core.driver_commands_interface import DriverCommandsInterface
+from cloudshell.layer_one.core.layer_one_driver_exception import LayerOneDriverException
 from cloudshell.layer_one.core.response.response_info import ResourceDescriptionResponseInfo
 from mrv.autoload.resource_description import ResourceDescription
 from mrv.command_actions.autoload_actions import AutoloadActions
 from mrv.command_actions.mapping_actions import MappingActions
 from mrv.command_actions.system_actions import SystemActions
+from mrv.response.mrv_response_info import AttributeValueResponseInfo
 
 
 class MrvDriverCommands(DriverCommandsInterface):
@@ -20,19 +23,22 @@ class MrvDriverCommands(DriverCommandsInterface):
         self._logger = logger
 
     @staticmethod
-    def _reformat_port(port):
-        _port = port.split('/')
-        return '1.{0}.{1}'.format(_port[1], _port[2])
+    def _address_list(raw_address):
+        return re.sub(r'\d+.\d+.\d+.\d+', '1', raw_address).split('/')
+
+    @staticmethod
+    def _reformat_address(raw_address):
+        return '.'.join(MrvDriverCommands._address_list(raw_address))
 
     def map_bidi(self, src_port, dst_port):
         with self._cli_handler.config_mode_service() as session:
             mapping_actions = MappingActions(session, self._logger)
-            mapping_actions.map_bidi(self._reformat_port(src_port), self._reformat_port(dst_port))
+            mapping_actions.map_bidi(self._reformat_address(src_port), self._reformat_address(dst_port))
 
     def map_uni(self, src_port, dst_port):
         with self._cli_handler.config_mode_service() as session:
             mapping_actions = MappingActions(session, self._logger)
-            mapping_actions.map_uni(self._reformat_port(src_port), self._reformat_port(dst_port))
+            mapping_actions.map_uni(self._reformat_address(src_port), self._reformat_address(dst_port))
 
     def get_resource_description(self, address):
         with self._cli_handler.default_mode_service() as session:
@@ -47,7 +53,7 @@ class MrvDriverCommands(DriverCommandsInterface):
     def map_clear(self, ports):
         with self._cli_handler.config_mode_service() as session:
             mapping_actions = MappingActions(session, self._logger)
-            _ports = [self._reformat_port(port) for port in ports]
+            _ports = [self._reformat_address(port) for port in ports]
             mapping_actions.map_clear(_ports)
 
     def login(self, address, username, password):
@@ -59,4 +65,47 @@ class MrvDriverCommands(DriverCommandsInterface):
     def map_clear_to(self, src_port, dst_port):
         with self._cli_handler.config_mode_service() as session:
             mapping_actions = MappingActions(session, self._logger)
-            mapping_actions.map_clear_to(self._reformat_port(src_port), self._reformat_port(dst_port))
+            mapping_actions.map_clear_to(self._reformat_address(src_port), self._reformat_address(dst_port))
+
+    def get_attribute_value(self, address, attribute_name):
+        address_list = self._address_list(address)
+        if len(address_list) == 1:
+            value = self._get_chassis_attribute(self._reformat_address(address), attribute_name)
+        elif len(address_list) == 2:
+            value = self._get_blade_attribute(self._reformat_address(address), attribute_name)
+        elif len(address_list) == 3:
+            value = self._get_port_attribute(self._reformat_address(address), attribute_name)
+        else:
+            raise LayerOneDriverException(self.__class__.__name__, 'Incorrect address, {}'.format(address))
+        return AttributeValueResponseInfo(value)
+
+    def set_attribute_value(self, address, attribute_name, attribute_value):
+        return AttributeValueResponseInfo(attribute_value)
+
+    def _get_chassis_attribute(self, address, attribute_name):
+        chassis_attribute_table = {'serial number': 'nbsCmmcChassisSerialNum'}
+        attribute_key = chassis_attribute_table.get(attribute_name.lower())
+        if attribute_key is None:
+            value = None
+        else:
+            with self._cli_handler.default_mode_service() as session:
+                autoload_actions = AutoloadActions(session, self._logger)
+                chassis_table = self._chassis_table_by_address(autoload_actions.chassis_table())
+                if address in chassis_table:
+                    value = chassis_table[address].get(attribute_key)
+                else:
+                    value = None
+        return value
+
+    def _get_blade_attribute(self, address, attribute_name):
+        pass
+
+    def _get_port_attribute(self, address, attribute_name):
+        pass
+
+    @staticmethod
+    def _chassis_table_by_address(chassis_table):
+        new_table = {}
+        for record in chassis_table:
+            new_table[record.get('nbsCmmcChassisIndex')] = record
+        return new_table

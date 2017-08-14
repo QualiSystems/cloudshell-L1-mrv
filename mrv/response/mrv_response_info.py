@@ -23,7 +23,7 @@ class AttributeValueResponseInfo(ResponseInfo):
     ATTRIBUTE_NAME = 'Value'
 
     def __init__(self, value):
-        self._value = value
+        self._value = value if value else 'NA'
 
     def build_xml_node(self):
         response_info_node = self._build_response_info_node()
