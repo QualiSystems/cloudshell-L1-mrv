@@ -6,6 +6,8 @@ import PyInstaller.utils.hooks
 
 CS_L1_NETCORE = "../cloudshell-L1-networking-core"
 
+HOME = "C:\Github\MRV"
+
 def add_data_files(related_path, root_path="."):
 
     path = os.path.join(root_path, related_path)
@@ -17,8 +19,8 @@ def add_data_files(related_path, root_path="."):
     return templates
 
 a = Analysis(['main.py'],
-             pathex=["C:\Github\MRV\cloudshell-core", "C:\Github\MRV\cloudshell-cli",
-             "C:\Github\MRV\cloudshell-L1-networking-core", "C:\Github\MRV\cloudshell-L1-mrv"],
+             pathex=[os.path.join(HOME, "cloudshell-core"), os.path.join(HOME, "cloudshell-cli"),
+             os.path.join(HOME, "cloudshell-L1-networking-core"), os.path.join(HOME, "cloudshell-L1-mrv")],
              binaries=None,
              datas=PyInstaller.utils.hooks.collect_data_files('cloudshell.core.logger') + \
              PyInstaller.utils.hooks.collect_data_files('mrv'),
@@ -37,7 +39,8 @@ pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
 exe = EXE(pyz,
           a.scripts,
-          a.binaries + add_data_files("cloudshell/layer_one/core/response/templates", CS_L1_NETCORE) + add_data_files("cloudshell/layer_one/core/response/resource_info/templates", CS_L1_NETCORE),
+          a.binaries + add_data_files("cloudshell/layer_one/core/response/templates", CS_L1_NETCORE) + \
+          add_data_files("cloudshell/layer_one/core/response/resource_info/templates", CS_L1_NETCORE),
           a.zipfiles,
           a.datas,
           name='MRV_MCC_41007',
