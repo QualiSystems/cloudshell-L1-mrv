@@ -29,7 +29,7 @@ class MrvCommandExecutor(CommandExecutor):
         :rtype: CommandResponse
         """
         with CommandResponseManager(command_request, self._logger) as command_response:
-            command_response.response_info = GetStateIdResponseInfo(self._state_id)
+            command_response.response_info = driver_instance.get_state_id()
         return command_response
 
     def set_state_id_executor(self, command_request, driver_instance):
@@ -41,7 +41,6 @@ class MrvCommandExecutor(CommandExecutor):
         :return:
         :rtype: CommandResponse
         """
-        self._state_id = command_request.command_params.get('StateId')[0]
         with CommandResponseManager(command_request, self._logger) as command_response:
             pass
         return command_response

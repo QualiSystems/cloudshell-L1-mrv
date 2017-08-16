@@ -9,7 +9,7 @@ from mrv.autoload.resource_description import ResourceDescription
 from mrv.command_actions.autoload_actions import AutoloadActions
 from mrv.command_actions.mapping_actions import MappingActions
 from mrv.command_actions.system_actions import SystemActions
-from mrv.response.mrv_response_info import AttributeValueResponseInfo
+from mrv.response.mrv_response_info import AttributeValueResponseInfo, GetStateIdResponseInfo
 
 
 class MrvDriverCommands(DriverCommandsInterface):
@@ -30,6 +30,27 @@ class MrvDriverCommands(DriverCommandsInterface):
     def _reformat_address(raw_address):
         return '.'.join(MrvDriverCommands._address_list(raw_address))
 
+    @property
+    def _chassis_table(self):
+        with self._cli_handler.default_mode_service() as session:
+            autoload_actions = AutoloadActions(session, self._logger)
+            return autoload_actions.chassis_table()
+
+    @property
+    def _slot_table(self):
+        with self._cli_handler.default_mode_service() as session:
+            autoload_actions = AutoloadActions(session, self._logger)
+            return autoload_actions.slot_table()
+
+    @property
+    def _port_table(self):
+        with self._cli_handler.default_mode_service() as session:
+            autoload_actions = AutoloadActions(session, self._logger)
+            return autoload_actions.port_table()
+
+    def get_state_id(self):
+        return GetStateIdResponseInfo(self._chassis_table[0].get('nbsCmmcChassisName'))
+
     def map_bidi(self, src_port, dst_port):
         with self._cli_handler.config_mode_service() as session:
             mapping_actions = MappingActions(session, self._logger)
@@ -41,13 +62,8 @@ class MrvDriverCommands(DriverCommandsInterface):
             mapping_actions.map_uni(self._reformat_address(src_port), self._reformat_address(dst_port))
 
     def get_resource_description(self, address):
-        with self._cli_handler.default_mode_service() as session:
-            autoload_actions = AutoloadActions(session, self._logger)
-            chassis_table = autoload_actions.chassis_table()
-            slot_table = autoload_actions.slot_table()
-            port_table = autoload_actions.port_table()
-            response_info = ResourceDescriptionResponseInfo(
-                ResourceDescription(address, chassis_table, slot_table, port_table).build())
+        response_info = ResourceDescriptionResponseInfo(
+            ResourceDescription(address, self._chassis_table, self._slot_table, self._port_table).build())
         return response_info
 
     def map_clear(self, ports):
@@ -88,13 +104,11 @@ class MrvDriverCommands(DriverCommandsInterface):
         if attribute_key is None:
             value = None
         else:
-            with self._cli_handler.default_mode_service() as session:
-                autoload_actions = AutoloadActions(session, self._logger)
-                chassis_table = self._chassis_table_by_address(autoload_actions.chassis_table())
-                if address in chassis_table:
-                    value = chassis_table[address].get(attribute_key)
-                else:
-                    value = None
+            chassis_table = self._chassis_table_by_address(self._chassis_table)
+            if address in chassis_table:
+                value = chassis_table[address].get(attribute_key)
+            else:
+                value = None
         return value
 
     def _get_blade_attribute(self, address, attribute_name):
