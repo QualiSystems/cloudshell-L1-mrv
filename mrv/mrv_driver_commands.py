@@ -7,6 +7,7 @@ from cloudshell.layer_one.core.layer_one_driver_exception import LayerOneDriverE
 from cloudshell.layer_one.core.response.response_info import ResourceDescriptionResponseInfo
 from mrv.autoload.resource_description import ResourceDescription
 from mrv.command_actions.autoload_actions import AutoloadActions
+from mrv.command_actions.chassis_configuration_actions import ChassisConfigurationActions
 from mrv.command_actions.mapping_actions import MappingActions
 from mrv.command_actions.system_actions import SystemActions
 from mrv.response.mrv_response_info import AttributeValueResponseInfo, GetStateIdResponseInfo
@@ -50,6 +51,11 @@ class MrvDriverCommands(DriverCommandsInterface):
 
     def get_state_id(self):
         return GetStateIdResponseInfo(self._chassis_table[0].get('nbsCmmcChassisName'))
+
+    def set_state_id(self, state_id):
+        with self._cli_handler.config_chassis_mode_service() as session:
+            chassis_configuration = ChassisConfigurationActions(session, self._logger)
+            chassis_configuration.set_chassis_name(state_id)
 
     def map_bidi(self, src_port, dst_port):
         with self._cli_handler.config_mode_service() as session:
