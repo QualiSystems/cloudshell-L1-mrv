@@ -7,8 +7,8 @@ from mrv.cli.mrv_command_modes import DefaultCommandMode, ConfigCommandMode, Con
 
 
 class MrvCliHandler(L1CliHandler):
-    def __init__(self, logger, session_type=None):
-        super(MrvCliHandler, self).__init__(logger, session_type)
+    def __init__(self, logger):
+        super(MrvCliHandler, self).__init__(logger)
         self.modes = CommandModeHelper.create_command_mode()
 
     @property

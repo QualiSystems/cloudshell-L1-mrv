@@ -6,21 +6,30 @@ from datetime import datetime
 
 from cloudshell.core.logger.qs_logger import get_qs_logger
 from cloudshell.layer_one.core.driver_listener import DriverListener
+from cloudshell.layer_one.core.helper.runtime_configuration import RuntimeConfiguration
 from cloudshell.layer_one.core.helper.xml_logger import XMLLogger
 from mrv.mrv_command_executor import MrvCommandExecutor
 
 if __name__ == '__main__':
     driver_name = 'MRV_MCC_GENERIC'
 
-    log_path = os.path.join(os.path.dirname(sys.argv[0]), '..', 'Logs')
+    driver_path = os.path.dirname(sys.argv[0])
+    log_path = os.path.join(driver_path, '..', 'Logs')
     os.environ['LOG_PATH'] = log_path
+    runtime_config = RuntimeConfiguration(
+        os.path.join(driver_path, driver_name + '_' + 'RuntimeConfig.yml'))
 
     xml_file_name = driver_name + '--' + datetime.now().strftime('%d-%b-%Y--%H-%M-%S') + '.xml'
     xml_logger = XMLLogger(os.path.join(log_path, driver_name, xml_file_name))
 
     command_logger = get_qs_logger(log_group=driver_name,
                                    log_file_prefix=driver_name + '_commands', log_category='COMMANDS')
+    log_level = runtime_config.read_key('LOGGING.LEVEL')
+    print log_level
+    if log_level:
+        command_logger.setLevel(log_level)
 
+    command_logger.debug('Starting driver {}'.format(driver_name))
     command_executor = MrvCommandExecutor(command_logger)
     server = DriverListener(command_executor, xml_logger, command_logger)
     server.start_listening(port=sys.argv[1] if len(sys.argv) > 1 else None)

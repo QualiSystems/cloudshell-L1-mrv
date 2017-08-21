@@ -5,34 +5,34 @@ from cloudshell.cli.cli import CLI
 from cloudshell.cli.session.ssh_session import SSHSession
 from cloudshell.cli.session.telnet_session import TelnetSession
 from cloudshell.cli.session_pool_manager import SessionPoolManager
+from cloudshell.layer_one.core.helper.runtime_configuration import RuntimeConfiguration
 from cloudshell.layer_one.core.layer_one_driver_exception import LayerOneDriverException
 
 
 class L1CliHandler(object):
-    def __init__(self, logger, session_type=None):
+    def __init__(self, logger):
         self._logger = logger
-        self._session_type = session_type
         self._cli = CLI(session_pool=SessionPoolManager(max_pool_size=1))
+        self._defined_session_types = {'SSH': SSHSession, 'TELNET': TelnetSession}
+
+        self._session_types = RuntimeConfiguration().read_key(
+            'CLI.TYPE') or self._defined_session_types.keys()
+        self._ports = RuntimeConfiguration().read_key('CLI.PORTS')
 
         self._host = None
-        self._port = None
         self._username = None
         self._password = None
 
-    def _ssh_session(self):
-        return SSHSession(self._host, self._username, self._password, self._port)
-
-    def _telnet_session(self):
-        return TelnetSession(self._host, self._username, self._password, self._port)
-
     def _new_sessions(self):
-        if self._session_type and self._session_type.lower() == SSHSession.SESSION_TYPE.lower():
-            new_sessions = self._ssh_session()
-        elif self._session_type and self._session_type.lower() == TelnetSession.SESSION_TYPE.lower():
-            new_sessions = self._telnet_session()
-        else:
-            new_sessions = [self._ssh_session(), self._telnet_session()]
-        return new_sessions
+        sessions = []
+        for session_type in self._session_types:
+            session_class = self._defined_session_types.get(session_type)
+            if not session_class:
+                raise LayerOneDriverException(self.__class__.__name__,
+                                              'Session type {} is not defined'.format(session_type))
+            port = self._ports.get(session_type)
+            sessions.append(session_class(self._host, self._username, self._password, port))
+        return sessions
 
     def define_session_attributes(self, address, username, password):
         """
@@ -45,10 +45,9 @@ class L1CliHandler(object):
         """
 
         address_list = address.split(':')
-        if len(address_list) == 2:
-            self._host, self._port = address_list
-        else:
-            self._host = address
+        if len(address_list) > 1:
+            raise LayerOneDriverException(self.__class__.__name__, 'Incorrect resource address')
+        self._host = address
         self._username = username
         self._password = password
 
