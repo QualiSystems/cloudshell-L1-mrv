@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from cloudshell.layer_one.core.driver_commands_interface import DriverCommandsInterface
+from cloudshell.layer_one.core.layer_one_driver_exception import LayerOneDriverException
 from cloudshell.layer_one.core.response.response_info import ResourceDescriptionResponseInfo
+from mrv.autoload.mrv_attributes import MRVChassisAttributes, MRVPortAttributes, MRVSlotAttributes
 from mrv.autoload.resource_description import ResourceDescription
 from mrv.command_actions.autoload_actions import AutoloadActions
 from mrv.command_actions.chassis_configuration_actions import ChassisConfigurationActions
@@ -42,7 +44,7 @@ class MrvDriverCommands(DriverCommandsInterface):
             return PortTableHelper(autoload_actions.port_table()).address_dict()
 
     def get_state_id(self):
-        return GetStateIdResponseInfo(self._chassis_table[0].get('nbsCmmcChassisName'))
+        return GetStateIdResponseInfo(self._chassis_table[Address(1)].get('nbsCmmcChassisName'))
 
     def set_state_id(self, state_id):
         with self._cli_handler.config_chassis_mode_service() as session:
@@ -87,40 +89,14 @@ class MrvDriverCommands(DriverCommandsInterface):
     def get_attribute_value(self, cs_address, attribute_name):
         address = Address.from_cs_address(cs_address)
         if address.is_chassis():
-            value = self._get_chassis_attribute(self._reformat_addressad, attribute_name)
+            attributes = MRVChassisAttributes(self._chassis_table)
         elif address.is_slot():
-            value = self._get_blade_attribute(self._reformat_address(address), attribute_name)
+            attributes = MRVSlotAttributes(self._slot_table)
         elif address.is_port():
-            value = self._get_port_attribute(self._reformat_address(address), attribute_name)
+            attributes = MRVPortAttributes(self._port_table)
         else:
             raise LayerOneDriverException(self.__class__.__name__, 'Incorrect address, {}'.format(address))
-        return AttributeValueResponseInfo(value)
+        return AttributeValueResponseInfo(attributes.get_attribute(attribute_name, address).value)
 
     def set_attribute_value(self, address, attribute_name, attribute_value):
         return AttributeValueResponseInfo(attribute_value)
-
-        # def _get_chassis_attribute(self, address, attribute_name):
-        #     chassis_attribute_table = {'serial number': 'nbsCmmcChassisSerialNum'}
-        #     attribute_key = chassis_attribute_table.get(attribute_name.lower())
-        #     if attribute_key is None:
-        #         value = None
-        #     else:
-        #         chassis_table = self._chassis_table_by_address(self._chassis_table)
-        #         if address in chassis_table:
-        #             value = chassis_table[address].get(attribute_key)
-        #         else:
-        #             value = None
-        #     return value
-        #
-        # def _get_blade_attribute(self, address, attribute_name):
-        #     pass
-        #
-        # def _get_port_attribute(self, address, attribute_name):
-        #     pass
-        #
-        # @staticmethod
-        # def _chassis_table_by_address(chassis_table):
-        #     new_table = {}
-        #     for record in chassis_table:
-        #         new_table[record.get('nbsCmmcChassisIndex')] = record
-        #     return new_table

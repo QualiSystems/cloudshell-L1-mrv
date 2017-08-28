@@ -43,7 +43,7 @@ class Address(object):
         :param raw_address: 
         :return: 
         """
-        return Address(raw_address.split('.'))
+        return Address(*raw_address.split('.'))
 
     @staticmethod
     def from_cs_address(raw_address):
@@ -52,7 +52,7 @@ class Address(object):
         :param raw_address: 
         :return: 
         """
-        return Address(re.sub(r'\d+.\d+.\d+.\d+', '1', raw_address).split('/'))
+        return Address(*re.sub(r'\d+.\d+.\d+.\d+', '1', raw_address).split('/'))
 
     def __eq__(self, other):
         """

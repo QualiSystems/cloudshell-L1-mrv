@@ -4,6 +4,7 @@
 from cloudshell.layer_one.core.response.resource_info.entities.blade import Blade
 from cloudshell.layer_one.core.response.resource_info.entities.chassis import Chassis
 from cloudshell.layer_one.core.response.resource_info.entities.port import Port
+from mrv.autoload.mrv_attributes import MRVChassisAttributes, MRVSlotAttributes, MRVPortAttributes
 from mrv.helpers.address import Address
 
 
@@ -21,21 +22,26 @@ class ResourceDescription(object):
     # Build Chassis
     def _build_chassis(self):
         chassis_dict = {}
+        chassis_attributes = MRVChassisAttributes(self._chassis_table)
         for address, record in self._chassis_table.iteritems():
-            model_name = record.get('nbsCmmcChassisModel')
-            serial_number = record.get('nbsCmmcChassisSerialNum')
+            model_name = 'Generic MRV chassis'
+            serial_number = chassis_attributes.serial_number(address).value
             chassis = Chassis(address.index(), self._resource_address, model_name, serial_number)
+            chassis.attributes = chassis_attributes.get_attributes(address)
             chassis_dict[address] = chassis
         return chassis_dict
 
     # Build blades
     def _build_blades(self, chassis_dict):
         blades_dict = {}
+        slots_attributes = MRVSlotAttributes(self._slot_table)
         for address, record in self._slot_table.iteritems():
-            model_name = record.get('nbsCmmcSlotModel')
-            serial_number = record.get('nbsCmmcSlotSerialNum')
-            if model_name.lower() != 'n/a' and model_name not in self.IGNORE_BLADES:
+            model_name = 'Generic L1 module'
+            blade_model = slots_attributes.model_name(address).value
+            serial_number = slots_attributes.serial_number(address).value
+            if model_name.lower() != 'n/a' and blade_model not in self.IGNORE_BLADES:
                 blade = Blade(address.index(), model_name, serial_number)
+                blade.attributes = MRVSlotAttributes(self._slot_table).get_attributes(address)
                 blades_dict[address] = blade
                 chassis = chassis_dict.get(address.get_chassis_address())
                 if chassis:
@@ -56,11 +62,14 @@ class ResourceDescription(object):
 
     def _build_ports(self, blades_dict):
         ports_dict = {}
+        ports_attributes = MRVPortAttributes(self._port_table)
         for address, record in self._port_table.iteritems():
             blade = blades_dict.get(address.get_slot_address())
             if blade:
                 serial_number = record.get('nbsCmmcPortSerialNumber')
-                port = Port(address.index(), 'Port {}'.format(blade.model_name), serial_number)
+                model_name = 'Generic L1 port'
+                port = Port(address.index(), model_name, serial_number)
+                port.attributes = ports_attributes.get_attributes(address)
                 ports_dict[address] = port
                 port_mapping_address = self._port_mapping_address(record)
                 if port_mapping_address:
