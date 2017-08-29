@@ -11,4 +11,5 @@ ERROR_MAP = OrderedDict([(r'[Ee]rror:', 'Command error')])
 CHASSIS_TABLE = CommandTemplate('show table chassis dump', ACTION_MAP, ERROR_MAP)
 SLOT_TABLE = CommandTemplate('show table slot dump', ACTION_MAP, ERROR_MAP)
 PORT_TABLE = CommandTemplate('show table port dump', ACTION_MAP, ERROR_MAP)
+PROTOCOL_TABLE = CommandTemplate('show table protocol dump', ACTION_MAP, ERROR_MAP)
 

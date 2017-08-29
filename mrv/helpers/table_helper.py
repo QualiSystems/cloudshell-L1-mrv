@@ -39,3 +39,14 @@ class PortTableHelper(TableHelper):
     def build_address(record):
         return Address(record.get('nbsCmmcPortChassisIndex'), record.get('nbsCmmcPortSlotIndex'),
                        record.get('nbsCmmcPortIndex'))
+
+
+class PortProtocolTableHelper(object):
+    def __init__(self, protocol_table):
+        self._protocol_table = protocol_table
+
+    def index_dict(self):
+        index_dict = {}
+        for record in self._protocol_table:
+            index_dict[record.get('nbsCmmcSysProtoIndex')] = record
+        return index_dict

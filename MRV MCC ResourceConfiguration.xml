@@ -10,6 +10,24 @@
         <Tag Name="Variable Capability"/>
     </Tags>
     <Attributes>
+        <AttributeInfo Name="OS Version" Type="String" DefaultValue="NA" IsReadOnly="true" IsCommand="true">
+            <Tags>
+                <TagName Name="Setting"/>
+                <TagName Name="Available For Abstract Resources"/>
+            </Tags>
+        </AttributeInfo>
+        <AttributeInfo Name="Serial Number" Type="String" DefaultValue="NA" IsReadOnly="true" IsCommand="true">
+            <Tags>
+                <TagName Name="Setting"/>
+                <TagName Name="Available For Abstract Resources"/>
+            </Tags>
+        </AttributeInfo>
+        <AttributeInfo Name="Model Name" Type="String" DefaultValue="NA" IsReadOnly="true" IsCommand="true">
+            <Tags>
+                <TagName Name="Setting"/>
+                <TagName Name="Available For Abstract Resources"/>
+            </Tags>
+        </AttributeInfo>
         <AttributeInfo Name="Rx Power (dBm)" Type="String" DefaultValue="NA" IsReadOnly="true" IsCommand="true">
             <Tags>
                 <TagName Name="Setting"/>
@@ -42,6 +60,18 @@
                 <TagName Name="Variable Capability"/>
             </Tags>
         </AttributeInfo>
+        <!--<AttributeInfo xsi:type="LookupAttributeDetails" Name="Duplex" Type="Lookup" DefaultValue="3" IsReadOnly="false"-->
+                       <!--IsCommand="true">-->
+            <!--<Tags>-->
+                <!--<TagName Name="Setting"/>-->
+                <!--<TagName Name="Available For Abstract Resources"/>-->
+                <!--<TagName Name="Variable Capability"/>-->
+            <!--</Tags>-->
+            <!--<LookupValues>-->
+                <!--<LookupValue NumericValue="2" StringValue="Half"/>-->
+                <!--<LookupValue NumericValue="3" StringValue="Full"/>-->
+            <!--</LookupValues>-->
+        <!--</AttributeInfo>-->
         <AttributeInfo Name="Password" Type="Password" DefaultValue="" IsReadOnly="false" IsCommand="false">
             <Tags>
                 <TagName Name="Configuration"/>
@@ -73,7 +103,7 @@
                 <LookupValue NumericValue="0" StringValue="Transparent"/>
             </LookupValues>
         </AttributeInfo>
-                <AttributeInfo Name="Protocol Type Value" Type="String" DefaultValue="NA" IsReadOnly="true" IsCommand="true">
+        <AttributeInfo Name="Protocol Type Value" Type="String" DefaultValue="NA" IsReadOnly="true" IsCommand="true">
             <Tags>
                 <TagName Name="Setting"/>
                 <TagName Name="Available For Abstract Resources"/>
@@ -93,19 +123,19 @@
         </AttributeInfo>
     </Attributes>
     <!--<Modules>-->
-        <!--<Module Name="Measurement">-->
-            <!--<AttachedAttributes>-->
-                <!--<AttributeName>Tag</AttributeName>-->
-            <!--</AttachedAttributes>-->
-        <!--</Module>-->
-        <!--<Module Name="Test">-->
-            <!--<AttachedAttributes>-->
-                <!--<AttributeName>Tag</AttributeName>-->
-            <!--</AttachedAttributes>-->
-        <!--</Module>-->
-        <!--<Module Name="Resource Module">-->
-            <!--<AttachedAttributes/>-->
-        <!--</Module>-->
+    <!--<Module Name="Measurement">-->
+    <!--<AttachedAttributes>-->
+    <!--<AttributeName>Tag</AttributeName>-->
+    <!--</AttachedAttributes>-->
+    <!--</Module>-->
+    <!--<Module Name="Test">-->
+    <!--<AttachedAttributes>-->
+    <!--<AttributeName>Tag</AttributeName>-->
+    <!--</AttachedAttributes>-->
+    <!--</Module>-->
+    <!--<Module Name="Resource Module">-->
+    <!--<AttachedAttributes/>-->
+    <!--</Module>-->
     <!--</Modules>-->
     <ResourceFamilies>
         <ResourceFamily Name="L1 Switch" IsMappableContainer="true" IsMappable="false" IsConnectable="false"

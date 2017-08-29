@@ -45,6 +45,14 @@ class AutoloadActions(object):
         result = self._parse_table(output)
         return result
 
+    def protocol_table(self):
+        """
+        :return: 
+        """
+        output = CommandTemplateExecutor(self._cli_service, command_template.PROTOCOL_TABLE).execute_command()
+        result = self._parse_table(output)
+        return result
+
     @staticmethod
     def _parse_table(data):
         result = []

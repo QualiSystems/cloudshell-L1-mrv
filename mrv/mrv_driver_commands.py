@@ -11,7 +11,7 @@ from mrv.command_actions.chassis_configuration_actions import ChassisConfigurati
 from mrv.command_actions.mapping_actions import MappingActions
 from mrv.command_actions.system_actions import SystemActions
 from mrv.helpers.address import Address
-from mrv.helpers.table_helper import ChassisTableHelper, BladeTableHelper, PortTableHelper
+from mrv.helpers.table_helper import ChassisTableHelper, BladeTableHelper, PortTableHelper, PortProtocolTableHelper
 from mrv.response.mrv_response_info import AttributeValueResponseInfo, GetStateIdResponseInfo
 
 
@@ -43,6 +43,12 @@ class MrvDriverCommands(DriverCommandsInterface):
             autoload_actions = AutoloadActions(session, self._logger)
             return PortTableHelper(autoload_actions.port_table()).address_dict()
 
+    @property
+    def _port_protocol_table(self):
+        with self._cli_handler.default_mode_service() as session:
+            autoload_actions = AutoloadActions(session, self._logger)
+            return PortProtocolTableHelper(autoload_actions.protocol_table()).index_dict()
+
     def get_state_id(self):
         return GetStateIdResponseInfo(self._chassis_table[Address(1)].get('nbsCmmcChassisName'))
 
@@ -65,7 +71,7 @@ class MrvDriverCommands(DriverCommandsInterface):
 
     def get_resource_description(self, address):
         response_info = ResourceDescriptionResponseInfo(
-            ResourceDescription(address, self._chassis_table, self._slot_table, self._port_table).build())
+            ResourceDescription(address, self._chassis_table, self._slot_table, self._port_table, self._port_protocol_table).build())
         return response_info
 
     def map_clear(self, ports):
@@ -93,7 +99,7 @@ class MrvDriverCommands(DriverCommandsInterface):
         elif address.is_slot():
             attributes = MRVSlotAttributes(self._slot_table)
         elif address.is_port():
-            attributes = MRVPortAttributes(self._port_table)
+            attributes = MRVPortAttributes(self._port_table, self._port_protocol_table)
         else:
             raise LayerOneDriverException(self.__class__.__name__, 'Incorrect address, {}'.format(address))
         return AttributeValueResponseInfo(attributes.get_attribute(attribute_name, address).value)

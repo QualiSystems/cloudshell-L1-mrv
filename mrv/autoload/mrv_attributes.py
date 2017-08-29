@@ -1,4 +1,6 @@
-from cloudshell.layer_one.core.response.resource_info.entities.attributes import StringAttribute
+import re
+
+from cloudshell.layer_one.core.response.resource_info.entities.attributes import StringAttribute, BooleanAttribute
 
 
 class MRVAttributes(object):
@@ -73,6 +75,67 @@ class MRVPortAttributes(MRVAttributes):
     PROTOCOL_VALUE = 'Protocol Value'
     PROTOCOL_TYPE_VALUE = 'Protocol Type Value'
     DUPLEX = 'Duplex'
+    AUTO_NEGOTIATION = 'Auto Negotiation'
+    RX_POWER = 'Rx Power (dBm)'
+    TX_POWER = 'Tx Power (dBm)'
+    WAVELENGTH = 'Wavelength'
+    SPEED = 'Speed'
 
-    def __init__(self, resource_table):
-        super(MRVPortAttributes, self).__init__(resource_table, {})
+    def __init__(self, resource_table, protocol_table):
+        super(MRVPortAttributes, self).__init__(resource_table, {self.MODEL_NAME: self.model_name,
+                                                                 self.PROTOCOL_VALUE: self.protocol_value,
+                                                                 self.PROTOCOL_TYPE_VALUE: self.protocol_type_value,
+                                                                 self.DUPLEX: self.duplex,
+                                                                 self.AUTO_NEGOTIATION: self.auto_negotiation,
+                                                                 self.RX_POWER: self.rx_power,
+                                                                 self.TX_POWER: self.tx_power,
+                                                                 self.WAVELENGTH: self.wavelength,
+                                                                 self.SPEED: self.speed})
+        self._protocol_table = protocol_table
+
+    def model_name(self, address):
+        value = self._resource_table.get(address).get('nbsCmmcPortName')
+        return StringAttribute(self.MODEL_NAME, value or StringAttribute.DEFAULT_VALUE)
+
+    def protocol_value(self, address):
+        value = None
+        proto_index = self._resource_table.get(address).get('nbsCmmcPortProtoOper')
+        if proto_index in self._protocol_table:
+            value = self._protocol_table[proto_index].get('nbsCmmcSysProtoRate')
+        return StringAttribute(self.PROTOCOL_VALUE, value or StringAttribute.DEFAULT_VALUE)
+
+    def protocol_type_value(self, address):
+        value = None
+        # value = self._resource_table.get(address).get('nbsCmmcPortDuplex')
+        proto_index = self._resource_table.get(address).get('nbsCmmcPortProtoOper')
+        if proto_index in self._protocol_table:
+            value = self._protocol_table[proto_index].get('nbsCmmcSysProtoFamily')
+        return StringAttribute(self.PROTOCOL_TYPE_VALUE, value or StringAttribute.DEFAULT_VALUE)
+
+    def duplex(self, address):
+        value = self._resource_table.get(address).get('nbsCmmcPortDuplex')
+        return StringAttribute(self.DUPLEX, value or StringAttribute.DEFAULT_VALUE)
+
+    def auto_negotiation(self, address):
+        out = self._resource_table.get(address).get('nbsCmmcPortAutoNegotiation')
+        if re.match(r'on|true', out, flags=re.IGNORECASE):
+            value = BooleanAttribute.TRUE
+        else:
+            value = BooleanAttribute.FALSE
+        return BooleanAttribute(self.AUTO_NEGOTIATION, value or BooleanAttribute.DEFAULT_VALUE)
+
+    def rx_power(self, address):
+        value = self._resource_table.get(address).get('nbsCmmcPortRxPower')
+        return StringAttribute(self.RX_POWER, value or StringAttribute.DEFAULT_VALUE)
+
+    def tx_power(self, address):
+        value = self._resource_table.get(address).get('nbsCmmcPortTxPower')
+        return StringAttribute(self.TX_POWER, value or StringAttribute.DEFAULT_VALUE)
+
+    def speed(self, address):
+        value = self._resource_table.get(address).get('nbsCmmcPortSpeed')
+        return StringAttribute(self.SPEED, value or StringAttribute.DEFAULT_VALUE)
+
+    def wavelength(self, address):
+        value = self._resource_table.get(address).get('nbsCmmcPortWavelength')
+        return StringAttribute(self.WAVELENGTH, value or StringAttribute.DEFAULT_VALUE)

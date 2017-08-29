@@ -11,11 +11,12 @@ from mrv.helpers.address import Address
 class ResourceDescription(object):
     IGNORE_BLADES = ['EM316LNXNM-MCC']
 
-    def __init__(self, address, chassis_table, slot_table, port_table):
+    def __init__(self, address, chassis_table, slot_table, port_table, port_protocol_table):
         self._resource_address = address
         self._chassis_table = chassis_table
         self._slot_table = slot_table
         self._port_table = port_table
+        self._port_protocol_table = port_protocol_table
 
         self._mapping_table = {}
 
@@ -39,7 +40,7 @@ class ResourceDescription(object):
             model_name = 'Generic L1 module'
             blade_model = slots_attributes.model_name(address).value
             serial_number = slots_attributes.serial_number(address).value
-            if model_name.lower() != 'n/a' and blade_model not in self.IGNORE_BLADES:
+            if blade_model.lower() != 'n/a' and blade_model not in self.IGNORE_BLADES:
                 blade = Blade(address.index(), model_name, serial_number)
                 blade.attributes = MRVSlotAttributes(self._slot_table).get_attributes(address)
                 blades_dict[address] = blade
@@ -62,7 +63,7 @@ class ResourceDescription(object):
 
     def _build_ports(self, blades_dict):
         ports_dict = {}
-        ports_attributes = MRVPortAttributes(self._port_table)
+        ports_attributes = MRVPortAttributes(self._port_table, self._port_protocol_table)
         for address, record in self._port_table.iteritems():
             blade = blades_dict.get(address.get_slot_address())
             if blade:
