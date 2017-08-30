@@ -8,7 +8,7 @@ class Address(object):
 
     def __init__(self, *address_indexes):
         if 0 < len(address_indexes) < 4:
-            self._address_indexes = address_indexes
+            self._address_indexes = tuple(str(i) for i in address_indexes)
         else:
             raise Exception(self.__class__.__name__, 'Incorrect address')
 
