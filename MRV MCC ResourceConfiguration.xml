@@ -110,6 +110,21 @@
             </Tags>
         </AttributeInfo>
     </Attributes>
+    <Modules>
+        <Module Name="Measurement">
+            <AttachedAttributes>
+                <AttributeName>Tag</AttributeName>
+            </AttachedAttributes>
+        </Module>
+        <Module Name="Test">
+            <AttachedAttributes>
+                <AttributeName>Tag</AttributeName>
+            </AttachedAttributes>
+        </Module>
+        <Module Name="Resource Module">
+            <AttachedAttributes/>
+        </Module>
+    </Modules>
     <ResourceFamilies>
         <ResourceFamily Name="L1 Switch" IsMappableContainer="true" IsMappable="false" IsConnectable="false"
                         IsLicenseCheckRequired="false" IsAllConnectedContainer="false" IsLockedByDefault="false"
