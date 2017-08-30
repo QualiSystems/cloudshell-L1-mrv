@@ -60,18 +60,6 @@
                 <TagName Name="Variable Capability"/>
             </Tags>
         </AttributeInfo>
-        <!--<AttributeInfo xsi:type="LookupAttributeDetails" Name="Duplex" Type="Lookup" DefaultValue="3" IsReadOnly="false"-->
-                       <!--IsCommand="true">-->
-            <!--<Tags>-->
-                <!--<TagName Name="Setting"/>-->
-                <!--<TagName Name="Available For Abstract Resources"/>-->
-                <!--<TagName Name="Variable Capability"/>-->
-            <!--</Tags>-->
-            <!--<LookupValues>-->
-                <!--<LookupValue NumericValue="2" StringValue="Half"/>-->
-                <!--<LookupValue NumericValue="3" StringValue="Full"/>-->
-            <!--</LookupValues>-->
-        <!--</AttributeInfo>-->
         <AttributeInfo Name="Password" Type="Password" DefaultValue="" IsReadOnly="false" IsCommand="false">
             <Tags>
                 <TagName Name="Configuration"/>
@@ -80,8 +68,8 @@
         <AttributeInfo xsi:type="LookupAttributeDetails" Name="Protocol" Type="Lookup" DefaultValue="2"
                        IsReadOnly="true" IsCommand="true">
             <Tags>
-                <TagName Name="Setting"/>
-                <TagName Name="Available For Abstract Resources"/>
+                <TagName Name="Configuration"/>
+                <TagName Name="Constant Capability"/>
             </Tags>
             <LookupValues>
                 <LookupValue NumericValue="2" StringValue="Transparent"/>
@@ -122,21 +110,6 @@
             </Tags>
         </AttributeInfo>
     </Attributes>
-    <!--<Modules>-->
-    <!--<Module Name="Measurement">-->
-    <!--<AttachedAttributes>-->
-    <!--<AttributeName>Tag</AttributeName>-->
-    <!--</AttachedAttributes>-->
-    <!--</Module>-->
-    <!--<Module Name="Test">-->
-    <!--<AttachedAttributes>-->
-    <!--<AttributeName>Tag</AttributeName>-->
-    <!--</AttachedAttributes>-->
-    <!--</Module>-->
-    <!--<Module Name="Resource Module">-->
-    <!--<AttachedAttributes/>-->
-    <!--</Module>-->
-    <!--</Modules>-->
     <ResourceFamilies>
         <ResourceFamily Name="L1 Switch" IsMappableContainer="true" IsMappable="false" IsConnectable="false"
                         IsLicenseCheckRequired="false" IsAllConnectedContainer="false" IsLockedByDefault="false"
@@ -207,7 +180,6 @@
                     <AttachedAttributes>
                         <AttachedAttribute Name="Protocol" IsOverridable="true" IsLocal="false">
                             <AllowedValues>
-                                <AllowedValue>0</AllowedValue>
                                 <AllowedValue>2</AllowedValue>
                             </AllowedValues>
                         </AttachedAttribute>
@@ -254,6 +226,6 @@
         </ResourceFamily>
     </ResourceFamilies>
     <DriverDescriptors>
-        <DriverDescriptor Name="MRV MCC GENERIC" DriverType="L1SwitchTclDriver" CustomParams="MRV_MCC_GENERIC.exe"/>
+        <DriverDescriptor Name="MRV MCC GENERIC" DriverType="L1SwitchDriver" CustomParams="MRV_MCC_GENERIC.exe"/>
     </DriverDescriptors>
 </ResourceManagementExportImport>
