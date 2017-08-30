@@ -40,13 +40,12 @@ class ResourceDescription(object):
             model_name = 'Generic L1 Module'
             blade_model = slots_attributes.model_name(address).value
             serial_number = slots_attributes.serial_number(address).value
-            if blade_model.lower() != 'n/a' and blade_model not in self.IGNORE_BLADES:
+            chassis = chassis_dict.get(address.get_chassis_address())
+            if chassis and blade_model.lower() != 'n/a' and blade_model not in self.IGNORE_BLADES:
                 blade = Blade(address.index(), model_name, serial_number)
-                blade.attributes = MRVSlotAttributes(self._slot_table).get_attributes(address)
+                blade.attributes = slots_attributes.get_attributes(address)
                 blades_dict[address] = blade
-                chassis = chassis_dict.get(address.get_chassis_address())
-                if chassis:
-                    blade.set_parent_resource(chassis)
+                blade.set_parent_resource(chassis)
         return blades_dict
 
     # Build ports
