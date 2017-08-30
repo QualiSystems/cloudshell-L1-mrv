@@ -25,7 +25,7 @@ class ResourceDescription(object):
         chassis_dict = {}
         chassis_attributes = MRVChassisAttributes(self._chassis_table)
         for address, record in self._chassis_table.iteritems():
-            model_name = 'Generic MRV chassis'
+            model_name = 'Generic MRV Chassis'
             serial_number = chassis_attributes.serial_number(address).value
             chassis = Chassis(address.index(), self._resource_address, model_name, serial_number)
             chassis.attributes = chassis_attributes.get_attributes(address)
@@ -37,7 +37,7 @@ class ResourceDescription(object):
         blades_dict = {}
         slots_attributes = MRVSlotAttributes(self._slot_table)
         for address, record in self._slot_table.iteritems():
-            model_name = 'Generic L1 module'
+            model_name = 'Generic L1 Module'
             blade_model = slots_attributes.model_name(address).value
             serial_number = slots_attributes.serial_number(address).value
             if blade_model.lower() != 'n/a' and blade_model not in self.IGNORE_BLADES:
@@ -68,7 +68,7 @@ class ResourceDescription(object):
             blade = blades_dict.get(address.get_slot_address())
             if blade:
                 serial_number = record.get('nbsCmmcPortSerialNumber')
-                model_name = 'Generic L1 port'
+                model_name = 'Generic L1 Port'
                 port = Port(address.index(), model_name, serial_number)
                 port.attributes = ports_attributes.get_attributes(address)
                 ports_dict[address] = port
