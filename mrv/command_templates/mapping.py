@@ -6,7 +6,7 @@ from collections import OrderedDict
 from cloudshell.cli.command_template.command_template import CommandTemplate
 
 ACTION_MAP = OrderedDict()
-ERROR_MAP = OrderedDict([(r'[Ee]rror:', 'Command error')])
+ERROR_MAP = OrderedDict([(r'[Ee]rror:', 'Command error'), (r'[Hh]ardware\s[Ii]ncompatibility', 'Mapping error')])
 
 MAP_BIDI = CommandTemplate('map bidir {src_port} {dst_port}', ACTION_MAP, ERROR_MAP)
 MAP_UNI = CommandTemplate('map {src_port} also-to {dst_port}', ACTION_MAP, ERROR_MAP)
