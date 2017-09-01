@@ -54,7 +54,7 @@ class MappingActions(object):
 
     def map_clear_to(self, src_port, dst_port):
         """
-        Clear bidirectional mapping
+        Clear unidirectional mapping
         :param src_port: 
         :param dst_port
         :return: 

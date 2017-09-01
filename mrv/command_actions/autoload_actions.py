@@ -6,9 +6,12 @@ from cloudshell.cli.command_template.command_template_executor import CommandTem
 
 
 class AutoloadActions(object):
+    """
+    Autoload actions
+    """
+
     def __init__(self, cli_service, logger):
         """
-        Reboot actions
         :param cli_service: default mode cli_service
         :type cli_service: CliService
         :param logger:
@@ -38,7 +41,7 @@ class AutoloadActions(object):
 
     def port_table(self):
         """
-        Slot table
+        Port table
         :return:
         """
         output = CommandTemplateExecutor(self._cli_service, command_template.PORT_TABLE).execute_command()
@@ -47,6 +50,7 @@ class AutoloadActions(object):
 
     def protocol_table(self):
         """
+        Protocol table
         :return: 
         """
         output = CommandTemplateExecutor(self._cli_service, command_template.PROTOCOL_TABLE).execute_command()
@@ -55,6 +59,11 @@ class AutoloadActions(object):
 
     @staticmethod
     def _parse_table(data):
+        """
+        Parse table and build dict
+        :param data: 
+        :return: 
+        """
         result = []
         line_output = data.split('\n')
         line_output.reverse()

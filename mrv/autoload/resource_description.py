@@ -9,6 +9,7 @@ from mrv.helpers.address import Address
 
 
 class ResourceDescription(object):
+    """MRV resource description builder"""
     IGNORE_BLADES = ['EM316LNXNM-MCC']
 
     def __init__(self, address, chassis_table, slot_table, port_table, port_protocol_table):

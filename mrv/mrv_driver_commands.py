@@ -16,6 +16,10 @@ from mrv.response.mrv_response_info import AttributeValueResponseInfo, GetStateI
 
 
 class MrvDriverCommands(DriverCommandsInterface):
+    """
+    MRV driver commands implementation
+    """
+
     def __init__(self, cli_handler, logger):
         """
         :param cli_handler: 
@@ -27,24 +31,28 @@ class MrvDriverCommands(DriverCommandsInterface):
 
     @property
     def _chassis_table(self):
+        """Chassis data"""
         with self._cli_handler.default_mode_service() as session:
             autoload_actions = AutoloadActions(session, self._logger)
             return ChassisTableHelper(autoload_actions.chassis_table()).address_dict()
 
     @property
     def _slot_table(self):
+        """Slot data"""
         with self._cli_handler.default_mode_service() as session:
             autoload_actions = AutoloadActions(session, self._logger)
             return BladeTableHelper(autoload_actions.slot_table()).address_dict()
 
     @property
     def _port_table(self):
+        """Port data"""
         with self._cli_handler.default_mode_service() as session:
             autoload_actions = AutoloadActions(session, self._logger)
             return PortTableHelper(autoload_actions.port_table()).address_dict()
 
     @property
     def _port_protocol_table(self):
+        """Port protocol data"""
         with self._cli_handler.default_mode_service() as session:
             autoload_actions = AutoloadActions(session, self._logger)
             return PortProtocolTableHelper(autoload_actions.protocol_table()).index_dict()
@@ -71,7 +79,8 @@ class MrvDriverCommands(DriverCommandsInterface):
 
     def get_resource_description(self, address):
         response_info = ResourceDescriptionResponseInfo(
-            ResourceDescription(address, self._chassis_table, self._slot_table, self._port_table, self._port_protocol_table).build())
+            ResourceDescription(address, self._chassis_table, self._slot_table, self._port_table,
+                                self._port_protocol_table).build())
         return response_info
 
     def map_clear(self, ports):
@@ -106,3 +115,6 @@ class MrvDriverCommands(DriverCommandsInterface):
 
     def set_attribute_value(self, address, attribute_name, attribute_value):
         return AttributeValueResponseInfo(attribute_value)
+
+    def map_tap(self, src_port, dst_port):
+        return self.map_uni(src_port, dst_port)

@@ -4,6 +4,7 @@ from mrv.helpers.address import Address
 
 
 class TableHelper(object):
+    """associate addresses instances with table data"""
     __metaclass__ = ABCMeta
 
     def __init__(self, table):

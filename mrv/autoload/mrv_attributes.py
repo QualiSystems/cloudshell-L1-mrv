@@ -4,6 +4,10 @@ from cloudshell.layer_one.core.response.resource_info.entities.attributes import
 
 
 class MRVAttributes(object):
+    """
+    MRV Attributes
+    """
+
     def __init__(self, resource_table, defined_attributes):
         self._resource_table = resource_table
         self._defined_attributes = defined_attributes

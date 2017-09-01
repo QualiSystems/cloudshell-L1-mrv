@@ -2,6 +2,9 @@ import re
 
 
 class Address(object):
+    """
+    MRV address helper
+    """
     CHASSIS_LENGTH = 1
     SLOT_LENGTH = 2
     PORT_LENGTH = 3
