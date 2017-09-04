@@ -1,6 +1,7 @@
 import re
 
-from cloudshell.layer_one.core.response.resource_info.entities.attributes import StringAttribute, BooleanAttribute
+from cloudshell.layer_one.core.response.resource_info.entities.attributes import StringAttribute, BooleanAttribute, \
+    NumericAttribute
 
 
 class MRVAttributes(object):
@@ -83,7 +84,7 @@ class MRVPortAttributes(MRVAttributes):
     RX_POWER = 'Rx Power (dBm)'
     TX_POWER = 'Tx Power (dBm)'
     WAVELENGTH = 'Wavelength'
-    SPEED = 'Speed'
+    PORT_SPEED = 'Port Speed'
 
     def __init__(self, resource_table, protocol_table):
         super(MRVPortAttributes, self).__init__(resource_table, {self.MODEL_NAME: self.model_name,
@@ -94,7 +95,7 @@ class MRVPortAttributes(MRVAttributes):
                                                                  self.RX_POWER: self.rx_power,
                                                                  self.TX_POWER: self.tx_power,
                                                                  self.WAVELENGTH: self.wavelength,
-                                                                 self.SPEED: self.speed})
+                                                                 self.PORT_SPEED: self.port_speed})
         self._protocol_table = protocol_table
 
     def model_name(self, address):
@@ -118,7 +119,14 @@ class MRVPortAttributes(MRVAttributes):
 
     def duplex(self, address):
         value = self._resource_table.get(address).get('nbsCmmcPortDuplex')
-        return StringAttribute(self.DUPLEX, value or StringAttribute.DEFAULT_VALUE)
+        if re.match(r'full]', value, flags=re.IGNORECASE):
+            num_value = '3'
+        elif re.match(r'half]', value, flags=re.IGNORECASE):
+            num_value = '2'
+        else:
+            num_value = NumericAttribute.DEFAULT_VALUE
+
+        return NumericAttribute(self.DUPLEX, num_value)
 
     def auto_negotiation(self, address):
         out = self._resource_table.get(address).get('nbsCmmcPortAutoNegotiation')
@@ -136,9 +144,9 @@ class MRVPortAttributes(MRVAttributes):
         value = self._resource_table.get(address).get('nbsCmmcPortTxPower')
         return StringAttribute(self.TX_POWER, value or StringAttribute.DEFAULT_VALUE)
 
-    def speed(self, address):
+    def port_speed(self, address):
         value = self._resource_table.get(address).get('nbsCmmcPortSpeed')
-        return StringAttribute(self.SPEED, value or StringAttribute.DEFAULT_VALUE)
+        return StringAttribute(self.PORT_SPEED, value or StringAttribute.DEFAULT_VALUE)
 
     def wavelength(self, address):
         value = self._resource_table.get(address).get('nbsCmmcPortWavelength')

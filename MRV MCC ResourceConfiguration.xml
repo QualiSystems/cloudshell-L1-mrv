@@ -28,37 +28,42 @@
                 <TagName Name="Available For Abstract Resources"/>
             </Tags>
         </AttributeInfo>
-        <AttributeInfo Name="Rx Power (dBm)" Type="String" DefaultValue="NA" IsReadOnly="true" IsCommand="true">
+        <AttributeInfo Name="Rx Power (dBm)" Type="String" DefaultValue="0" IsReadOnly="true" IsCommand="true">
             <Tags>
                 <TagName Name="Setting"/>
                 <TagName Name="Available For Abstract Resources"/>
             </Tags>
         </AttributeInfo>
-        <AttributeInfo Name="Tx Power (dBm)" Type="String" DefaultValue="NA" IsReadOnly="true" IsCommand="true">
+        <AttributeInfo Name="Tx Power (dBm)" Type="String" DefaultValue="0" IsReadOnly="true" IsCommand="true">
             <Tags>
                 <TagName Name="Setting"/>
                 <TagName Name="Available For Abstract Resources"/>
             </Tags>
         </AttributeInfo>
-        <AttributeInfo Name="Wavelength" Type="String" DefaultValue="NA" IsReadOnly="true" IsCommand="true">
+        <AttributeInfo Name="Wavelength" Type="String" DefaultValue="0" IsReadOnly="true" IsCommand="true">
             <Tags>
                 <TagName Name="Setting"/>
                 <TagName Name="Available For Abstract Resources"/>
             </Tags>
         </AttributeInfo>
-        <AttributeInfo Name="Auto Negotiation" Type="Boolean" DefaultValue="True" IsReadOnly="true" IsCommand="true">
+        <AttributeInfo Name="Auto Negotiation" Type="Boolean" DefaultValue="True" IsReadOnly="false" IsCommand="true">
             <Tags>
                 <TagName Name="Setting"/>
                 <TagName Name="Available For Abstract Resources"/>
                 <TagName Name="Variable Capability"/>
             </Tags>
         </AttributeInfo>
-        <AttributeInfo Name="Duplex" Type="String" DefaultValue="NA" IsReadOnly="true" IsCommand="true">
+        <AttributeInfo xsi:type="LookupAttributeDetails" Name="Duplex" Type="Lookup" DefaultValue="3" IsReadOnly="false"
+                       IsCommand="true">
             <Tags>
                 <TagName Name="Setting"/>
                 <TagName Name="Available For Abstract Resources"/>
                 <TagName Name="Variable Capability"/>
             </Tags>
+            <LookupValues>
+                <LookupValue NumericValue="2" StringValue="Half"/>
+                <LookupValue NumericValue="3" StringValue="Full"/>
+            </LookupValues>
         </AttributeInfo>
         <AttributeInfo Name="Password" Type="Password" DefaultValue="" IsReadOnly="false" IsCommand="false">
             <Tags>
@@ -68,8 +73,8 @@
         <AttributeInfo xsi:type="LookupAttributeDetails" Name="Protocol" Type="Lookup" DefaultValue="2"
                        IsReadOnly="true" IsCommand="true">
             <Tags>
-                <TagName Name="Configuration"/>
-                <TagName Name="Constant Capability"/>
+                <TagName Name="Setting"/>
+                <TagName Name="Available For Abstract Resources"/>
             </Tags>
             <LookupValues>
                 <LookupValue NumericValue="2" StringValue="Transparent"/>
@@ -97,7 +102,7 @@
                 <TagName Name="Available For Abstract Resources"/>
             </Tags>
         </AttributeInfo>
-        <AttributeInfo Name="Speed" Type="String" DefaultValue="NA" IsReadOnly="true" IsCommand="true">
+        <AttributeInfo Name="Port Speed" Type="String" DefaultValue="NA" IsReadOnly="true" IsCommand="true">
             <Tags>
                 <TagName Name="Setting"/>
                 <TagName Name="Available For Abstract Resources"/>
@@ -224,7 +229,7 @@
                         <AttachedAttribute Name="Auto Negotiation" IsOverridable="true" IsLocal="false">
                             <AllowedValues/>
                         </AttachedAttribute>
-                        <AttachedAttribute Name="Speed" IsOverridable="true" IsLocal="false">
+                        <AttachedAttribute Name="Port Speed" IsOverridable="true" IsLocal="false">
                             <AllowedValues/>
                         </AttachedAttribute>
                     </AttachedAttributes>
