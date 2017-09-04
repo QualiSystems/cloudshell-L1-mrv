@@ -16,27 +16,58 @@ class Address(object):
             raise Exception(self.__class__.__name__, 'Incorrect address')
 
     def build_str(self):
+        """
+        Build address str
+        :rtype: str
+        """
         return '.'.join(self._address_indexes)
 
     def get_chassis_address(self):
+        """
+        Related Chassis address
+        :rtype: Address
+        """
         return Address(*self._address_indexes[:self.CHASSIS_LENGTH])
 
     def get_slot_address(self):
+        """
+        Related slot address
+        :rtype: Address
+        """
         return Address(*self._address_indexes[:self.SLOT_LENGTH])
 
     def get_port_address(self):
+        """
+        Related port address
+        :rtype: Address
+        """
         return Address(*self._address_indexes[:self.PORT_LENGTH])
 
     def is_chassis(self):
+        """
+        Check if address is chassis address
+        :rtype: bool 
+        """
         return len(self._address_indexes) == self.CHASSIS_LENGTH
 
     def is_slot(self):
+        """
+        CHeck if address is slot address
+        :rtype: bool
+        """
         return len(self._address_indexes) == self.SLOT_LENGTH
 
     def is_port(self):
+        """
+        Check if address is port address 
+        :rtype: bool
+        """
         return len(self._address_indexes) == self.PORT_LENGTH
 
     def index(self):
+        """
+        Entity index
+        """
         return self._address_indexes[-1]
 
     @staticmethod
@@ -44,7 +75,7 @@ class Address(object):
         """
         Build address from string address, like '1.2.3'
         :param raw_address: 
-        :return: 
+        :rtype: Address
         """
         return Address(*raw_address.split('.'))
 
@@ -53,7 +84,7 @@ class Address(object):
         """
         Build address from string address, like '10.0.1.1/2/3'
         :param raw_address: 
-        :return: 
+        :rtype: Address
         """
         return Address(*re.sub(r'\d+.\d+.\d+.\d+', '1', raw_address).split('/'))
 

@@ -4,7 +4,7 @@ from mrv.helpers.address import Address
 
 
 class TableHelper(object):
-    """associate addresses instances with table data"""
+    """Associate addresses instances with table data"""
     __metaclass__ = ABCMeta
 
     def __init__(self, table):
@@ -16,6 +16,10 @@ class TableHelper(object):
         pass
 
     def address_dict(self):
+        """
+        Build dict of data with Address of entity as key
+        :return: 
+        """
         new_table = {}
         for record in self._table:
             address = self.build_address(record)
