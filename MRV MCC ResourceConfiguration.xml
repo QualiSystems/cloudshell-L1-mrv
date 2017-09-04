@@ -241,6 +241,6 @@
         </ResourceFamily>
     </ResourceFamilies>
     <DriverDescriptors>
-        <DriverDescriptor Name="MRV MCC GENERIC" DriverType="L1SwitchDriver" CustomParams="MRV_MCC_GENERIC.exe"/>
+        <DriverDescriptor Name="MRV MCC GENERIC" DriverType="L1SwitchTclDriver" CustomParams="MRV_MCC_GENERIC.exe"/>
     </DriverDescriptors>
 </ResourceManagementExportImport>
