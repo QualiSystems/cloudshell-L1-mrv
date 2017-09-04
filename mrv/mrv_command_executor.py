@@ -15,5 +15,5 @@ class MrvCommandExecutor(CommandExecutor):
         super(MrvCommandExecutor, self).__init__(logger)
         self._driver_instance = MrvDriverCommands(MrvCliHandler(self._logger), self._logger)
 
-    def _driver_instance(self):
+    def driver_instance(self):
         return self._driver_instance

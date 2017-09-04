@@ -56,10 +56,10 @@ class ResourceDescription(object):
         if int(chassis_id) > 0:
             slot_id = data_dict.get('nbsCmmcPortZoneSlotOper')
             port_id = data_dict.get('nbsCmmcPortZoneIdOper')
-            port_mapping_key = Address(chassis_id, slot_id, port_id)
+            port_mapping_address = Address(chassis_id, slot_id, port_id)
         else:
-            port_mapping_key = None
-        return port_mapping_key
+            port_mapping_address = None
+        return port_mapping_address
 
     def _build_ports(self, blades_dict):
         ports_dict = {}
