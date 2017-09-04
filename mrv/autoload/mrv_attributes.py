@@ -119,9 +119,9 @@ class MRVPortAttributes(MRVAttributes):
 
     def duplex(self, address):
         value = self._resource_table.get(address).get('nbsCmmcPortDuplex')
-        if re.match(r'full]', value, flags=re.IGNORECASE):
+        if re.match(r'full', value, flags=re.IGNORECASE):
             num_value = '3'
-        elif re.match(r'half]', value, flags=re.IGNORECASE):
+        elif re.match(r'half', value, flags=re.IGNORECASE):
             num_value = '2'
         else:
             num_value = NumericAttribute.DEFAULT_VALUE
