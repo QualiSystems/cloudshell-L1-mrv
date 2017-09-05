@@ -1,14 +1,17 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import re
 
 from cloudshell.layer_one.core.driver_commands_interface import DriverCommandsInterface
 from cloudshell.layer_one.core.layer_one_driver_exception import LayerOneDriverException
 from cloudshell.layer_one.core.response.response_info import ResourceDescriptionResponseInfo
 from mrv.autoload.mrv_attributes import MRVChassisAttributes, MRVPortAttributes, MRVSlotAttributes
 from mrv.autoload.resource_description import ResourceDescription
+from mrv.cli.mrv_command_modes import ConfigPortCommandMode, ConfigChassisCommandMode
 from mrv.command_actions.autoload_actions import AutoloadActions
 from mrv.command_actions.chassis_configuration_actions import ChassisConfigurationActions
 from mrv.command_actions.mapping_actions import MappingActions
+from mrv.command_actions.port_configuration_actions import PortConfigurationActions
 from mrv.command_actions.system_actions import SystemActions
 from mrv.helpers.address import Address
 from mrv.helpers.table_helper import ChassisTableHelper, BladeTableHelper, PortTableHelper, PortProtocolTableHelper
@@ -28,6 +31,9 @@ class MrvDriverCommands(DriverCommandsInterface):
         """
         self._cli_handler = cli_handler
         self._logger = logger
+        self._ports_attributes_setters = {'Duplex': self._set_port_duplex,
+                                          'Protocol': self._set_protocol,
+                                          'Auto Negotiation': self._set_auto_neg}
 
     @property
     def _chassis_table(self):
@@ -61,9 +67,11 @@ class MrvDriverCommands(DriverCommandsInterface):
         return GetStateIdResponseInfo(self._chassis_table[Address(1)].get('nbsCmmcChassisName'))
 
     def set_state_id(self, state_id):
-        with self._cli_handler.config_chassis_mode_service() as session:
-            chassis_configuration = ChassisConfigurationActions(session, self._logger)
-            chassis_configuration.set_chassis_name(state_id)
+        with self._cli_handler.config_mode_service() as session:
+            detached_chassis_mode = ConfigChassisCommandMode.detached_instance('1', session.command_mode)
+            with session.enter_mode(detached_chassis_mode) as chassis_configuration_session:
+                chassis_configuration = ChassisConfigurationActions(chassis_configuration_session, self._logger)
+                chassis_configuration.set_chassis_name(state_id)
 
     def map_bidi(self, src_port, dst_port):
         with self._cli_handler.config_mode_service() as session:
@@ -113,8 +121,44 @@ class MrvDriverCommands(DriverCommandsInterface):
             raise LayerOneDriverException(self.__class__.__name__, 'Incorrect address, {}'.format(address))
         return AttributeValueResponseInfo(attributes.get_attribute(attribute_name, address).value)
 
-    def set_attribute_value(self, address, attribute_name, attribute_value):
-        return AttributeValueResponseInfo(attribute_value)
+    def set_attribute_value(self, cs_address, attribute_name, attribute_value):
+        address = Address.from_cs_address(cs_address)
+        if address.is_chassis() or address.is_slot():
+            raise LayerOneDriverException(self.__class__.__name__,
+                                          'SetAttributeValue for Chassis or Slot/Blade is not supported')
+        else:
+            attribute_setter = self._ports_attributes_setters.get(attribute_name)
+            if attribute_setter:
+                attribute_setter(address, attribute_value)
+            else:
+                raise LayerOneDriverException(self.__class__.__name__,
+                                              'SetAttributeValue is not supported for attribute {}'.format(
+                                                  attribute_name))
+            return AttributeValueResponseInfo(attribute_value)
+
+    def _set_port_duplex(self, address, value):
+        with self._cli_handler.config_mode_service() as session:
+            detached_port_mode = ConfigPortCommandMode.detached_instance(address.build_str(), session.command_mode)
+            with session.enter_mode(detached_port_mode) as config_port_session:
+                port_configuration_actions = PortConfigurationActions(config_port_session, self._logger)
+                if str(value) == '2':
+                    duplex_value = 'half'
+                else:
+                    duplex_value = 'full'
+                port_configuration_actions.set_port_duplex(duplex_value)
+
+    def _set_protocol(self, address, value):
+        pass
+
+    def _set_auto_neg(self, address, value):
+        with self._cli_handler.config_mode_service() as session:
+            detached_port_mode = ConfigPortCommandMode.detached_instance(address.build_str(), session.command_mode)
+            with session.enter_mode(detached_port_mode) as config_port_session:
+                port_configuration_actions = PortConfigurationActions(config_port_session, self._logger)
+                if re.match(r'[Ff]alse', value):
+                    port_configuration_actions.set_auto_neg_off()
+                else:
+                    port_configuration_actions.set_auto_neg_on()
 
     def map_tap(self, src_port, dst_port):
         return self.map_uni(src_port, dst_port)

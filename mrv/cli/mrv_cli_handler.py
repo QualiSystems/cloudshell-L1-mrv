@@ -1,9 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 from cloudshell.cli.command_mode_helper import CommandModeHelper
 from mrv.cli.l1_cli_handler import L1CliHandler
-from mrv.cli.mrv_command_modes import DefaultCommandMode, ConfigCommandMode, ConfigChassisCommandMode
+from mrv.cli.mrv_command_modes import DefaultCommandMode, ConfigCommandMode
 
 
 class MrvCliHandler(L1CliHandler):
@@ -17,11 +16,11 @@ class MrvCliHandler(L1CliHandler):
 
     @property
     def _config_mode(self):
+        """
+        :return:
+        :rtype: cloudshell.cli.command_mode.CommandMode
+        """
         return self.modes[ConfigCommandMode]
-
-    @property
-    def _config_chassis_mode(self):
-        return self.modes[ConfigChassisCommandMode]
 
     def default_mode_service(self):
         """
@@ -38,11 +37,3 @@ class MrvCliHandler(L1CliHandler):
         :rtype: cloudshell.cli.cli_service.CliService
         """
         return self.get_cli_service(self._config_mode)
-
-    def config_chassis_mode_service(self):
-        """
-        Config chassis mode session
-        :return:
-        :rtype: cloudshell.cli.cli_service.CliService
-        """
-        return self.get_cli_service(self._config_chassis_mode)
