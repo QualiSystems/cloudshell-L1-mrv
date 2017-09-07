@@ -4,7 +4,8 @@ import re
 
 from cloudshell.layer_one.core.driver_commands_interface import DriverCommandsInterface
 from cloudshell.layer_one.core.layer_one_driver_exception import LayerOneDriverException
-from cloudshell.layer_one.core.response.response_info import ResourceDescriptionResponseInfo
+from cloudshell.layer_one.core.response.response_info import ResourceDescriptionResponseInfo, GetStateIdResponseInfo, \
+    AttributeValueResponseInfo
 from mrv.autoload.mrv_attributes import MRVChassisAttributes, MRVPortAttributes, MRVSlotAttributes
 from mrv.autoload.resource_description import ResourceDescription
 from mrv.cli.mrv_command_modes import ConfigPortCommandMode, ConfigChassisCommandMode
@@ -15,7 +16,6 @@ from mrv.command_actions.port_configuration_actions import PortConfigurationActi
 from mrv.command_actions.system_actions import SystemActions
 from mrv.helpers.address import Address
 from mrv.helpers.table_helper import ChassisTableHelper, BladeTableHelper, PortTableHelper, PortProtocolTableHelper
-from mrv.response.mrv_response_info import AttributeValueResponseInfo, GetStateIdResponseInfo
 
 
 class MrvDriverCommands(DriverCommandsInterface):
