@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import re
 
 import mrv.command_templates.autoload as command_template
 from cloudshell.cli.command_template.command_template_executor import CommandTemplateExecutor
@@ -76,16 +77,4 @@ class AutoloadActions(object):
 
     @staticmethod
     def _split_string(string):
-        result = []
-        b_o = False
-        word = ''
-        for char in string:
-            if char == '"' and not b_o:
-                b_o = True
-                word = ''
-            elif char == '"' and b_o:
-                b_o = False
-                result.append(word)
-            elif b_o:
-                word += char
-        return result
+        return re.findall('"(.*?)"', string)
