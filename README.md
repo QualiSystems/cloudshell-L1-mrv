@@ -11,8 +11,11 @@
 # MRV MCC GENERIC L1 DRIVER
 
 # Overview
-The MRV MCC GENERIC Driver provides TestShell Resource Manager with the capability to communicate with MRV switches that are part of the Resource Manager inventory.
-End users will be able to create routes, configure port settings, and read values from the switch using a Resource Manager client, or the TestShell API.
+The MRV MCC GENERIC Driver provides CloudShell Resource Manager with the capability to communicate with MRV switches that are part of the Resource Manager inventory.
+End users will be able to create routes and read values from the switch using a Resource Manager client, or the API.
+This driver supports all MRV models using a generic type - same goes to all the modules (blades).
+In additon, this driver support all MRV firmware versions.
+
 
 # Commands
 | Feature | Description |
