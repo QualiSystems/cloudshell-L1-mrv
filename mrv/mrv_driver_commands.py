@@ -6,8 +6,8 @@ from cloudshell.layer_one.core.driver_commands_interface import DriverCommandsIn
 from cloudshell.layer_one.core.layer_one_driver_exception import LayerOneDriverException
 from cloudshell.layer_one.core.response.response_info import ResourceDescriptionResponseInfo, GetStateIdResponseInfo, \
     AttributeValueResponseInfo
-from mrv.autoload.mrv_attributes import MRVChassisAttributes, MRVPortAttributes, MRVSlotAttributes
 from mrv.autoload.resource_description import ResourceDescription
+from mrv.cli.mrv_cli_handler import MrvCliHandler
 from mrv.cli.mrv_command_modes import ConfigPortCommandMode, ConfigChassisCommandMode
 from mrv.command_actions.autoload_actions import AutoloadActions
 from mrv.command_actions.chassis_configuration_actions import ChassisConfigurationActions
@@ -23,14 +23,12 @@ class MrvDriverCommands(DriverCommandsInterface):
     MRV driver commands implementation
     """
 
-    def __init__(self, cli_handler, logger):
+    def __init__(self, logger):
         """
-        :param cli_handler: 
-        :type cli_handler: mrv.cli.mrv_cli_handler.MrvCliHandler
         :param logger: 
         """
-        self._cli_handler = cli_handler
         self._logger = logger
+        self._cli_handler = MrvCliHandler(self._logger)
         self._ports_attributes_setters = {'Duplex': self._set_port_duplex,
                                           'Protocol': self._set_protocol,
                                           'Auto Negotiation': self._set_auto_neg}

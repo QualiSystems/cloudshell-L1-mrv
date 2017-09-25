@@ -1,10 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import re
 
 from cloudshell.layer_one.core.response.resource_info.entities.blade import Blade
 from cloudshell.layer_one.core.response.resource_info.entities.chassis import Chassis
 from cloudshell.layer_one.core.response.resource_info.entities.port import Port
-from mrv.autoload.mrv_attributes import MRVChassisAttributes, MRVSlotAttributes, MRVPortAttributes
 from mrv.helpers.address import Address
 
 
@@ -24,27 +24,26 @@ class ResourceDescription(object):
     # Build Chassis
     def _build_chassis(self):
         chassis_dict = {}
-        chassis_attributes = MRVChassisAttributes(self._chassis_table)
         for address, record in self._chassis_table.iteritems():
-            model_name = 'Generic MRV Chassis'
-            serial_number = chassis_attributes.serial_number(address).value
-            chassis = Chassis(address.index(), self._resource_address, model_name, serial_number)
-            chassis.attributes = chassis_attributes.get_attributes(address)
+            serial_number = record.get('nbsCmmcChassisSerialNum')
+            chassis = Chassis(address.index(), self._resource_address, 'Generic MRV Chassis', serial_number)
+            chassis.set_model_name(record.get('nbsCmmcChassisModel'))
+            chassis.set_serial_number(serial_number)
+            chassis.set_os_version(None)
             chassis_dict[address] = chassis
         return chassis_dict
 
     # Build blades
     def _build_blades(self, chassis_dict):
         blades_dict = {}
-        slots_attributes = MRVSlotAttributes(self._slot_table)
         for address, record in self._slot_table.iteritems():
-            model_name = 'Generic L1 Module'
-            blade_model = slots_attributes.model_name(address).value
-            serial_number = slots_attributes.serial_number(address).value
+            blade_model = record.get('nbsCmmcSlotModel')
+            serial_number = record.get('nbsCmmcSlotSerialNum')
             chassis = chassis_dict.get(address.get_chassis_address())
             if chassis and blade_model.lower() != 'n/a' and blade_model not in self.IGNORE_BLADES:
-                blade = Blade(address.index(), model_name, serial_number)
-                blade.attributes = slots_attributes.get_attributes(address)
+                blade = Blade(address.index(), 'Generic L1 Module', serial_number)
+                blade.set_model_name(blade_model)
+                blade.set_serial_number(serial_number)
                 blades_dict[address] = blade
                 blade.set_parent_resource(chassis)
         return blades_dict
@@ -61,16 +60,35 @@ class ResourceDescription(object):
             port_mapping_address = None
         return port_mapping_address
 
+    def _set_port_attributes(self, port, record):
+        """
+        :param port:
+        :type port: cloudshell.layer_one.core.response.resource_info.entities.port.Port
+        :param record:
+        :type record: dict
+        :return:
+        """
+        port.set_model_name(record.get('nbsCmmcPortName'))
+        proto_index = record.get('nbsCmmcPortProtoOper')
+        if proto_index in self._port_protocol_table:
+            port.set_protocol_value(self._port_protocol_table[proto_index].get('nbsCmmcSysProtoRate'))
+            port.set_protocol_type_value(self._port_protocol_table[proto_index].get('nbsCmmcSysProtoFamily'))
+        port.set_duplex(record.get('nbsCmmcPortDuplex'))
+        port.set_auto_negotiation(
+            re.match(r'on|true', record.get('nbsCmmcPortAutoNegotiation') is not None, flags=re.IGNORECASE))
+        port.set_rx_power(record.get('nbsCmmcPortRxPower'))
+        port.set_tx_power(record.get('nbsCmmcPortTxPower'))
+        port.set_port_speed(record.get('nbsCmmcPortSpeed'))
+        port.set_wavelength(record.get('nbsCmmcPortWavelength'))
+
     def _build_ports(self, blades_dict):
         ports_dict = {}
-        ports_attributes = MRVPortAttributes(self._port_table, self._port_protocol_table)
         for address, record in self._port_table.iteritems():
             blade = blades_dict.get(address.get_slot_address())
             if blade:
                 serial_number = record.get('nbsCmmcPortSerialNumber')
-                model_name = 'Generic L1 Port'
-                port = Port(address.index(), model_name, serial_number)
-                port.attributes = ports_attributes.get_attributes(address)
+                port = Port(address.index(), 'Generic L1 Port', serial_number)
+                self._set_port_attributes(port, record)
                 ports_dict[address] = port
                 port_mapping_address = self._port_mapping_address(record)
                 if port_mapping_address:
