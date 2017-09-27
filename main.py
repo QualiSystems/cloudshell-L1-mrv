@@ -9,7 +9,7 @@ from cloudshell.layer_one.core.command_executor import CommandExecutor
 from cloudshell.layer_one.core.driver_listener import DriverListener
 from cloudshell.layer_one.core.helper.runtime_configuration import RuntimeConfiguration
 from cloudshell.layer_one.core.helper.xml_logger import XMLLogger
-from mrv.mrv_driver_commands import MrvDriverCommands
+from mrv.driver_commands import DriverCommands
 
 if __name__ == '__main__':
     driver_name = 'MRV_MCC_GENERIC'
@@ -37,8 +37,8 @@ if __name__ == '__main__':
 
     command_logger.debug('Starting driver {}'.format(driver_name))
 
-    # MRV Driver commands instance
-    driver_instance = MrvDriverCommands(command_logger)
+    # Driver commands instance
+    driver_instance = DriverCommands(command_logger)
 
     # Creating command executor instance
     command_executor = CommandExecutor(driver_instance, command_logger)

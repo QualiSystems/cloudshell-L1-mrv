@@ -23,6 +23,10 @@ class ResourceDescription(object):
 
     # Build Chassis
     def _build_chassis(self):
+        """
+        Build chassis using data from chassis table
+        :return:
+        """
         chassis_dict = {}
         for address, record in self._chassis_table.iteritems():
             serial_number = record.get('nbsCmmcChassisSerialNum')
@@ -35,6 +39,11 @@ class ResourceDescription(object):
 
     # Build blades
     def _build_blades(self, chassis_dict):
+        """
+        Build blades using data from slot table
+        :param chassis_dict:
+        :return:
+        """
         blades_dict = {}
         for address, record in self._slot_table.iteritems():
             blade_model = record.get('nbsCmmcSlotModel')
@@ -62,6 +71,7 @@ class ResourceDescription(object):
 
     def _set_port_attributes(self, port, record):
         """
+        Set create attributes for a specific port
         :param port:
         :type port: cloudshell.layer_one.core.response.resource_info.entities.port.Port
         :param record:
@@ -75,13 +85,18 @@ class ResourceDescription(object):
             port.set_protocol_type_value(self._port_protocol_table[proto_index].get('nbsCmmcSysProtoFamily'))
         port.set_duplex(record.get('nbsCmmcPortDuplex'))
         port.set_auto_negotiation(
-            re.match(r'on|true', record.get('nbsCmmcPortAutoNegotiation') is not None, flags=re.IGNORECASE))
+            re.match(r'on|true', record.get('nbsCmmcPortAutoNegotiation') or '', flags=re.IGNORECASE) is not None)
         port.set_rx_power(record.get('nbsCmmcPortRxPower'))
         port.set_tx_power(record.get('nbsCmmcPortTxPower'))
         port.set_port_speed(record.get('nbsCmmcPortSpeed'))
         port.set_wavelength(record.get('nbsCmmcPortWavelength'))
 
     def _build_ports(self, blades_dict):
+        """
+        Build port using data from port table
+        :param blades_dict:
+        :return:
+        """
         ports_dict = {}
         for address, record in self._port_table.iteritems():
             blade = blades_dict.get(address.get_slot_address())
@@ -104,6 +119,10 @@ class ResourceDescription(object):
             src_port.add_mapping(dst_port)
 
     def build(self):
+        """
+        Build autoload structure
+        :return:
+        """
         chassis_dict = self._build_chassis()
         blades_dict = self._build_blades(chassis_dict)
         ports_dict = self._build_ports(blades_dict)

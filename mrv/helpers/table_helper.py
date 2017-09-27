@@ -13,6 +13,11 @@ class TableHelper(object):
     @staticmethod
     @abstractmethod
     def build_address(record):
+        """
+        Address for a specific entity
+        :param record:
+        :return:
+        """
         pass
 
     def address_dict(self):
@@ -30,23 +35,41 @@ class TableHelper(object):
 class ChassisTableHelper(TableHelper):
     @staticmethod
     def build_address(record):
+        """
+        Chassis address
+        :param record:
+        :return:
+        """
         return Address(record.get('nbsCmmcChassisIndex'))
 
 
 class BladeTableHelper(TableHelper):
     @staticmethod
     def build_address(record):
+        """
+        Blade address
+        :param record:
+        :return:
+        """
         return Address(record.get('nbsCmmcSlotChassisIndex'), record.get('nbsCmmcSlotIndex'))
 
 
 class PortTableHelper(TableHelper):
     @staticmethod
     def build_address(record):
+        """
+        Port address
+        :param record:
+        :return:
+        """
         return Address(record.get('nbsCmmcPortChassisIndex'), record.get('nbsCmmcPortSlotIndex'),
                        record.get('nbsCmmcPortIndex'))
 
 
 class PortProtocolTableHelper(object):
+    """
+    Build protocol table
+    """
     def __init__(self, protocol_table):
         self._protocol_table = protocol_table
 
