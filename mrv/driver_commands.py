@@ -126,13 +126,13 @@ class DriverCommands(DriverCommandsInterface):
             mapping_actions.map_bidi(Address.from_cs_address(src_port).build_str(),
                                      Address.from_cs_address(dst_port).build_str())
 
-    def map_uni(self, src_port, dst_port):
+    def map_uni(self, src_port, dst_ports):
         """
         Unidirectional mapping of two ports
         :param src_port: src port address, '192.168.42.240/1/21'
         :type src_port: str
-        :param dst_port: dst port address, '192.168.42.240/1/22'
-        :type dst_port: str
+        :param dst_ports: list of dst ports addresses, ['192.168.42.240/1/21', '192.168.42.240/1/22']
+        :type dst_ports: list
         :return: None
         :raises Exception: if command failed
 
@@ -141,8 +141,9 @@ class DriverCommands(DriverCommandsInterface):
         """
         with self._cli_handler.config_mode_service() as session:
             mapping_actions = MappingActions(session, self._logger)
-            mapping_actions.map_uni(Address.from_cs_address(src_port).build_str(),
-                                    Address.from_cs_address(dst_port).build_str())
+            _src_port = Address.from_cs_address(src_port).build_str()
+            _dst_ports = [Address.from_cs_address(port).build_str() for port in dst_ports]
+            mapping_actions.map_uni(_src_port, _dst_ports)
 
     def get_resource_description(self, address):
         """
@@ -200,13 +201,13 @@ class DriverCommands(DriverCommandsInterface):
             _ports = [Address.from_cs_address(port).build_str() for port in ports]
             mapping_actions.map_clear(_ports)
 
-    def map_clear_to(self, src_port, dst_port):
+    def map_clear_to(self, src_port, dst_ports):
         """
         Remove simplex/multi-cast/duplex connection ending on the destination port
         :param src_port: src port address, '192.168.42.240/1/21'
         :type src_port: str
-        :param dst_port: dst port address, '192.168.42.240/1/22'
-        :type dst_port: str
+        :param dst_ports: list of dst ports addresses, ['192.168.42.240/1/21', '192.168.42.240/1/22']
+        :type dst_ports: list
         :return: None
         :raises Exception: if command failed
 
@@ -215,8 +216,9 @@ class DriverCommands(DriverCommandsInterface):
         """
         with self._cli_handler.config_mode_service() as session:
             mapping_actions = MappingActions(session, self._logger)
-            mapping_actions.map_clear_to(Address.from_cs_address(src_port).build_str(),
-                                         Address.from_cs_address(dst_port).build_str())
+            _src_port = Address.from_cs_address(src_port).build_str()
+            _dst_ports = [Address.from_cs_address(port).build_str() for port in dst_ports]
+            mapping_actions.map_clear_to(_src_port, _dst_ports)
 
     def get_attribute_value(self, cs_address, attribute_name):
         """
@@ -304,5 +306,5 @@ class DriverCommands(DriverCommandsInterface):
                 else:
                     port_configuration_actions.set_auto_neg_on()
 
-    def map_tap(self, src_port, dst_port):
-        return self.map_uni(src_port, dst_port)
+    def map_tap(self, src_port, dst_ports):
+        return self.map_uni(src_port, dst_ports)
