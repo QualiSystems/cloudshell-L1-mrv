@@ -29,15 +29,17 @@ class MappingActions(object):
             src_port=src_port, dst_port=dst_port)
         return output
 
-    def map_uni(self, src_port, dst_port):
+    def map_uni(self, src_port, dst_ports):
         """
         Unidirectional mapping
         :param src_port: 
-        :param dst_port: 
+        :param dst_ports:
         :return: 
         """
-        output = CommandTemplateExecutor(self._cli_service, command_template.MAP_UNI).execute_command(
-            src_port=src_port, dst_port=dst_port)
+        executor = CommandTemplateExecutor(self._cli_service, command_template.MAP_UNI)
+        output = ''
+        for dst_port in dst_ports:
+            output += executor.execute_command(src_port=src_port, dst_port=dst_port)
         return output
 
     def map_clear(self, ports):
@@ -52,13 +54,15 @@ class MappingActions(object):
             output += executor.execute_command(port=port)
         return output
 
-    def map_clear_to(self, src_port, dst_port):
+    def map_clear_to(self, src_port, dst_ports):
         """
         Clear unidirectional mapping
         :param src_port: 
-        :param dst_port
+        :param dst_ports
         :return: 
         """
-        output = CommandTemplateExecutor(self._cli_service, command_template.MAP_CLEAR_TO).execute_command(
-            src_port=src_port, dst_port=dst_port)
+        executor = CommandTemplateExecutor(self._cli_service, command_template.MAP_CLEAR_TO)
+        output = ''
+        for dst_port in dst_ports:
+            output += executor.execute_command(src_port=src_port, dst_port=dst_port)
         return output

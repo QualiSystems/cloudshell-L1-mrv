@@ -3,7 +3,7 @@ import re
 
 class Address(object):
     """
-    MRV address helper
+    MRV address entity
     """
     CHASSIS_LENGTH = 1
     SLOT_LENGTH = 2

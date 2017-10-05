@@ -25,7 +25,8 @@ class AutoloadActions(object):
     def chassis_table(self):
         """
         Chassis table
-        :return:
+        :return: list of chassis data, [{'index': '1', 'model': 'MRV Chassis', 'serial': '1ndsKsf'}, ]
+        :rtype: list
         """
         output = CommandTemplateExecutor(self._cli_service, command_template.CHASSIS_TABLE).execute_command()
         result = self._parse_table(output)
@@ -34,7 +35,9 @@ class AutoloadActions(object):
     def slot_table(self):
         """
         Slot table
-        :return:
+        :return: list of slot data, [{'index':'1.1', 'slot_model': 'Mrv Blade A', 'slot_serial': 'saf31423'},
+                                        {'index':'1.2', 'slot_model': 'Mrv Blade A', 'slot_serial': 'saf31423'}]
+        :rtype: list
         """
         output = CommandTemplateExecutor(self._cli_service, command_template.SLOT_TABLE).execute_command()
         result = self._parse_table(output)
@@ -43,7 +46,10 @@ class AutoloadActions(object):
     def port_table(self):
         """
         Port table
-        :return:
+        :return: list of port data, [{'index':'1.1.1', 'port_model': 'Mrv port A', 'port_speed': '1Gb'},
+                                        {'index':'1.2.1', 'port_model': 'Mrv port A', 'port_speed': '1Gb'},
+                                        {'index':'1.2.2', 'port_model': 'Mrv port A', 'port_speed': '1Gb'}]
+        :rtype: list
         """
         output = CommandTemplateExecutor(self._cli_service, command_template.PORT_TABLE).execute_command()
         result = self._parse_table(output)

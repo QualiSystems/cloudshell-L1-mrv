@@ -5,10 +5,11 @@ import sys
 from datetime import datetime
 
 from cloudshell.core.logger.qs_logger import get_qs_logger
+from cloudshell.layer_one.core.command_executor import CommandExecutor
 from cloudshell.layer_one.core.driver_listener import DriverListener
 from cloudshell.layer_one.core.helper.runtime_configuration import RuntimeConfiguration
 from cloudshell.layer_one.core.helper.xml_logger import XMLLogger
-from mrv.mrv_command_executor import MrvCommandExecutor
+from mrv.driver_commands import DriverCommands
 
 if __name__ == '__main__':
     driver_name = 'MRV_MCC_GENERIC'
@@ -36,11 +37,14 @@ if __name__ == '__main__':
 
     command_logger.debug('Starting driver {}'.format(driver_name))
 
+    # Driver commands instance
+    driver_instance = DriverCommands(command_logger)
+
     # Creating command executor instance
-    command_executor = MrvCommandExecutor(command_logger)
+    command_executor = CommandExecutor(driver_instance, command_logger)
 
     # Creating listener instance
     server = DriverListener(command_executor, xml_logger, command_logger)
 
-    # Start listening socket
+    # Start listening
     server.start_listening(port=sys.argv[1] if len(sys.argv) > 1 else None)
