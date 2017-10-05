@@ -78,17 +78,27 @@ class ResourceDescription(object):
         :type record: dict
         :return:
         """
+        # Model Name attribute
         port.set_model_name(record.get('nbsCmmcPortName'))
+        # Protocol type and value attributes
         proto_index = record.get('nbsCmmcPortProtoOper')
         if proto_index in self._port_protocol_table:
             port.set_protocol_value(self._port_protocol_table[proto_index].get('nbsCmmcSysProtoRate'))
             port.set_protocol_type_value(self._port_protocol_table[proto_index].get('nbsCmmcSysProtoFamily'))
-        port.set_duplex(record.get('nbsCmmcPortDuplex'))
-        port.set_auto_negotiation(
-            re.match(r'on|true', record.get('nbsCmmcPortAutoNegotiation') or '', flags=re.IGNORECASE) is not None)
+        # Port duplex attribute
+        port.set_duplex(re.sub(r'notsupported|n/a', '', record.get('nbsCmmcPortDuplex') or '', flags=re.IGNORECASE))
+        # Auto negotiation attribute
+        _auto_negotiation_value = re.sub(r'notsupported|n/a', '', record.get('nbsCmmcPortAutoNegotiation') or '',
+                                         flags=re.IGNORECASE)
+        if _auto_negotiation_value:
+            port.set_auto_negotiation(re.match(r'on|true', _auto_negotiation_value, flags=re.IGNORECASE) is not None)
+        # Port RxPower attribute
         port.set_rx_power(record.get('nbsCmmcPortRxPower'))
+        # Port Tx Power attribute
         port.set_tx_power(record.get('nbsCmmcPortTxPower'))
+        # Port speed attribute
         port.set_port_speed(record.get('nbsCmmcPortSpeed'))
+        # port wavelength attribute
         port.set_wavelength(record.get('nbsCmmcPortWavelength'))
 
     def _build_ports(self, blades_dict):
