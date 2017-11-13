@@ -4,33 +4,22 @@ block_cipher = None
 import os
 import PyInstaller.utils.hooks
 
-CS_L1_NETCORE = "../cloudshell-L1-networking-core"
-
-HOME = "C:\Github\MRV"
-
-def add_data_files(related_path, root_path="."):
-
-    path = os.path.join(root_path, related_path)
-    templates = []
-    for resp_temp_file in os.listdir(path):
-        templates.append((os.path.join(related_path, resp_temp_file),
-                          os.path.join(path, resp_temp_file),
-                          "DATA"))
-    return templates
+DEPENDENCIES = "./dependencies"
 
 a = Analysis(['main.py'],
-             pathex=[os.path.join(HOME, "cloudshell-core"), os.path.join(HOME, "cloudshell-cli"),
-             os.path.join(HOME, "cloudshell-L1-networking-core"), os.path.join(HOME, "cloudshell-L1-mrv")],
+             pathex=[DEPENDENCIES],
              binaries=None,
-             datas=PyInstaller.utils.hooks.collect_data_files('cloudshell.core.logger') + \
+             datas=[(os.path.join(DEPENDENCIES, "cloudshell/layer_one/core/response/templates/*.xml"), 'cloudshell/layer_one/core/response/templates'), 
+			 (os.path.join(DEPENDENCIES, "cloudshell/layer_one/core/response/resource_info/templates/*.xml"), 'cloudshell/layer_one/core/response/resource_info/templates'), 
+			 (os.path.join(DEPENDENCIES, "cloudshell/core/logger/qs_config.ini"), 'cloudshell/core/logger')] + \
              PyInstaller.utils.hooks.collect_data_files('mrv'),
              hiddenimports=PyInstaller.utils.hooks.collect_submodules('cloudshell-cli') + \
-             PyInstaller.utils.hooks.collect_submodules('paramiko') + [
-                "mrv"
+             PyInstaller.utils.hooks.collect_submodules('.\sources\paramiko') + [
+                "drivername"
              ] + PyInstaller.utils.hooks.collect_submodules('cloudshell'),
-             hookspath=["..\cloudshell-cli\."],
+             hookspath=[os.path.join(DEPENDENCIES, "cloudshell")],
              runtime_hooks=None,
-             excludes=["cloudshell.snmp", "cloudshell.shell", "cloudshell.networking"],
+             excludes=None,
              win_no_prefer_redirects=None,
              win_private_assemblies=None,
              cipher=block_cipher)
@@ -39,8 +28,7 @@ pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
 exe = EXE(pyz,
           a.scripts,
-          a.binaries + add_data_files("cloudshell/layer_one/core/response/templates", CS_L1_NETCORE) + \
-          add_data_files("cloudshell/layer_one/core/response/resource_info/templates", CS_L1_NETCORE),
+          a.binaries,
           a.zipfiles,
           a.datas,
           name='MRV_MCC_GENERIC',
@@ -49,5 +37,4 @@ exe = EXE(pyz,
           upx=True,
           console=True,
           version='version.txt',
-          icon=os.path.join(CS_L1_NETCORE, "img/icon.ico")
-          )
+          icon="./img/icon.ico")
