@@ -308,3 +308,7 @@ class DriverCommands(DriverCommandsInterface):
 
     def map_tap(self, src_port, dst_ports):
         return self.map_uni(src_port, dst_ports)
+
+    def set_speed_manual(self, src_port, dst_port, speed, duplex):
+        return NotImplemented
+
