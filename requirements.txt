@@ -1,4 +1,4 @@
 PyYAML
--e git+https://github.com/QualiSystems/cloudshell-L1-networking-core.git@dev#egg=cloudshell-L1-networking-core
--e git+https://github.com/QualiSystems/cloudshell-core.git@dev#egg=cloudshell-core
--e git+https://github.com/QualiSystems/cloudshell-cli.git@dev#egg=cloudshell-cli
+git+https://github.com/QualiSystems/cloudshell-L1-networking-core.git@dev#egg=cloudshell-L1-networking-core
+git+https://github.com/QualiSystems/cloudshell-core.git@dev#egg=cloudshell-core
+git+https://github.com/QualiSystems/cloudshell-cli.git@dev#egg=cloudshell-cli
