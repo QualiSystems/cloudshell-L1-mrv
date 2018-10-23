@@ -49,7 +49,7 @@ class ResourceDescription(object):
             blade_model = record.get('nbsCmmcSlotModel')
             serial_number = record.get('nbsCmmcSlotSerialNum')
             chassis = chassis_dict.get(address.get_chassis_address())
-            if chassis and blade_model.lower() != 'n/a' and blade_model not in self.IGNORE_BLADES:
+            if chassis and blade_model and blade_model.lower() != 'n/a' and blade_model not in self.IGNORE_BLADES:
                 blade = Blade(address.index(), 'Generic L1 Module', serial_number)
                 blade.set_model_name(blade_model)
                 blade.set_serial_number(serial_number)
