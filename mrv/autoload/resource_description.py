@@ -29,9 +29,9 @@ class ResourceDescription(object):
         """
         chassis_dict = {}
         for address, record in self._chassis_table.iteritems():
-            serial_number = record.get('nbsCmmcChassisSerialNum')
+            serial_number = record.get('nbsCmmcChassisSerialNum') or record.get('SerialNum')
             chassis = Chassis(address.index(), self._resource_address, 'Generic MRV Chassis', serial_number)
-            chassis.set_model_name(record.get('nbsCmmcChassisModel'))
+            chassis.set_model_name(record.get('nbsCmmcChassisModel') or record.get('Model'))
             chassis.set_serial_number(serial_number)
             chassis.set_os_version(None)
             chassis_dict[address] = chassis
@@ -46,8 +46,8 @@ class ResourceDescription(object):
         """
         blades_dict = {}
         for address, record in self._slot_table.iteritems():
-            blade_model = record.get('nbsCmmcSlotModel')
-            serial_number = record.get('nbsCmmcSlotSerialNum')
+            blade_model = record.get('nbsCmmcSlotModel') or record.get('Model')
+            serial_number = record.get('nbsCmmcSlotSerialNum') or record.get('SerialNum')
             chassis = chassis_dict.get(address.get_chassis_address())
             if chassis and blade_model and blade_model.lower() != 'n/a' and blade_model not in self.IGNORE_BLADES:
                 blade = Blade(address.index(), 'Generic L1 Module', serial_number)
@@ -60,10 +60,10 @@ class ResourceDescription(object):
     # Build ports
     @staticmethod
     def _port_mapping_address(data_dict):
-        chassis_id = data_dict.get('nbsCmmcPortZoneChassisOper')
+        chassis_id = data_dict.get('nbsCmmcPortZoneChassisOper') or data_dict.get('ZoneChassisOper')
         if int(chassis_id) > 0:
-            slot_id = data_dict.get('nbsCmmcPortZoneSlotOper')
-            port_id = data_dict.get('nbsCmmcPortZoneIdOper')
+            slot_id = data_dict.get('nbsCmmcPortZoneSlotOper') or data_dict.get('ZoneSlotOper')
+            port_id = data_dict.get('nbsCmmcPortZoneIdOper') or data_dict.get('ZoneIdOper')
             port_mapping_address = Address(chassis_id, slot_id, port_id)
         else:
             port_mapping_address = None
@@ -79,16 +79,23 @@ class ResourceDescription(object):
         :return:
         """
         # Model Name attribute
-        port.set_model_name(record.get('nbsCmmcPortName'))
+        port.set_model_name(record.get('nbsCmmcPortName') or record.get('Name'))
         # Protocol type and value attributes
-        proto_index = record.get('nbsCmmcPortProtoOper')
+        proto_index = record.get('nbsCmmcPortProtoOper') or record.get('ProtoOper')
         if proto_index in self._port_protocol_table:
-            port.set_protocol_value(self._port_protocol_table[proto_index].get('nbsCmmcSysProtoRate'))
-            port.set_protocol_type_value(self._port_protocol_table[proto_index].get('nbsCmmcSysProtoFamily'))
+            protocol_rate = self._port_protocol_table[proto_index].get('nbsCmmcSysProtoRate') or \
+                            self._port_protocol_table[proto_index].get('Rate')
+            port.set_protocol_value(protocol_rate)
+            protocol_family = self._port_protocol_table[proto_index].get('nbsCmmcSysProtoFamily') or \
+                              self._port_protocol_table[proto_index].get('Family')
+            port.set_protocol_type_value(protocol_family)
         # Port duplex attribute
-        port.set_duplex(re.sub(r'notsupported|n/a', '', record.get('nbsCmmcPortDuplex') or '', flags=re.IGNORECASE))
+        port.set_duplex(re.sub(r'notsupported|n/a', '', record.get('nbsCmmcPortDuplex') or record.get('Duplex') or '',
+                               flags=re.IGNORECASE))
         # Auto negotiation attribute
-        _auto_negotiation_value = re.sub(r'notsupported|n/a', '', record.get('nbsCmmcPortAutoNegotiation') or '',
+        _auto_negotiation_value = re.sub(r'notsupported|n/a', '',
+                                         record.get('nbsCmmcPortAutoNegotiation') or record.get(
+                                             'AutoNegotiation') or '',
                                          flags=re.IGNORECASE)
         if _auto_negotiation_value:
             port.set_auto_negotiation(re.match(r'on|true', _auto_negotiation_value, flags=re.IGNORECASE) is not None)
@@ -97,9 +104,9 @@ class ResourceDescription(object):
         # Port Tx Power attribute
         port.set_tx_power(record.get('nbsCmmcPortTxPower'))
         # Port speed attribute
-        port.set_port_speed(record.get('nbsCmmcPortSpeed'))
+        port.set_port_speed(record.get('nbsCmmcPortSpeed') or record.get('Speed'))
         # port wavelength attribute
-        port.set_wavelength(record.get('nbsCmmcPortWavelength'))
+        port.set_wavelength(record.get('nbsCmmcPortWavelength') or record.get('Wavelength'))
 
     def _build_ports(self, blades_dict):
         """
@@ -111,7 +118,7 @@ class ResourceDescription(object):
         for address, record in self._port_table.iteritems():
             blade = blades_dict.get(address.get_slot_address())
             if blade:
-                serial_number = record.get('nbsCmmcPortSerialNumber')
+                serial_number = record.get('nbsCmmcPortSerialNumber') or record.get('SerialNumber')
                 port = Port(address.index(), 'Generic L1 Port', serial_number)
                 self._set_port_attributes(port, record)
                 ports_dict[address] = port

@@ -40,7 +40,8 @@ class ChassisTableHelper(TableHelper):
         :param record:
         :return:
         """
-        return Address(record.get('nbsCmmcChassisIndex'))
+        index = record.get('nbsCmmcChassisIndex') or record.get('Index')
+        return Address(index)
 
 
 class BladeTableHelper(TableHelper):
@@ -51,7 +52,9 @@ class BladeTableHelper(TableHelper):
         :param record:
         :return:
         """
-        return Address(record.get('nbsCmmcSlotChassisIndex'), record.get('nbsCmmcSlotIndex'))
+        chassis_index = record.get('nbsCmmcSlotChassisIndex') or record.get('ChassisIndex')
+        slot_index = record.get('nbsCmmcSlotIndex') or record.get('Index')
+        return Address(chassis_index, slot_index)
 
 
 class PortTableHelper(TableHelper):
@@ -62,8 +65,11 @@ class PortTableHelper(TableHelper):
         :param record:
         :return:
         """
-        return Address(record.get('nbsCmmcPortChassisIndex'), record.get('nbsCmmcPortSlotIndex'),
-                       record.get('nbsCmmcPortIndex'))
+        chassis_index = record.get('nbsCmmcPortChassisIndex') or record.get('ChassisIndex')
+        slot_index = record.get('nbsCmmcPortSlotIndex') or record.get('SlotIndex')
+        index = record.get('nbsCmmcPortIndex') or record.get('Index')
+        return Address(chassis_index, slot_index,
+                       index)
 
 
 class PortProtocolTableHelper(object):
@@ -76,5 +82,5 @@ class PortProtocolTableHelper(object):
     def index_dict(self):
         index_dict = {}
         for record in self._protocol_table:
-            index_dict[record.get('nbsCmmcSysProtoIndex')] = record
+            index_dict[record.get('nbsCmmcSysProtoIndex') or record.get('Index')] = record
         return index_dict
