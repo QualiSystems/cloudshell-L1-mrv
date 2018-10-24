@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import os
 import re
 
 from cloudshell.layer_one.core.driver_commands_interface import DriverCommandsInterface
@@ -9,6 +10,7 @@ from cloudshell.layer_one.core.response.response_info import ResourceDescription
 from mrv.autoload.resource_description import ResourceDescription
 from mrv.cli.mrv_cli_handler import MrvCliHandler
 from mrv.cli.mrv_command_modes import ConfigPortCommandMode, ConfigChassisCommandMode
+from mrv.cli.simulator.cli_simulator import CLISimulator
 from mrv.command_actions.autoload_actions import AutoloadActions
 from mrv.command_actions.chassis_configuration_actions import ChassisConfigurationActions
 from mrv.command_actions.mapping_actions import MappingActions
@@ -29,6 +31,9 @@ class DriverCommands(DriverCommandsInterface):
         """
         self._logger = logger
         self._cli_handler = MrvCliHandler(self._logger)
+        # self._cli_handler = CLISimulator(
+        #     os.path.join(os.path.dirname(os.path.abspath(__file__)), 'cli', 'simulator', 'data'),
+        #     logger)
         self._ports_attributes_setters = {'Duplex': self._set_port_duplex,
                                           'Protocol': self._set_protocol,
                                           'Auto Negotiation': self._set_auto_neg}
