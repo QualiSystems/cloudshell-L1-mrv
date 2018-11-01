@@ -2,7 +2,7 @@ import os
 import re
 
 from cloudshell.cli.cli_service import CliService
-from netscout_teststream.cli.l1_cli_handler import L1CliHandler
+from mrv.cli.l1_cli_handler import L1CliHandler
 
 
 class TestCliContextManager(object):
