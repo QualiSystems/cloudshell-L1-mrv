@@ -25,11 +25,12 @@ class DriverCommands(DriverCommandsInterface):
     MRV driver commands implementation
     """
 
-    def __init__(self, logger):
+    def __init__(self, logger, runtime_config):
         """
         :param logger: 
         """
         self._logger = logger
+        self._runtime_config = runtime_config
         self._cli_handler = MrvCliHandler(self._logger)
         # self._cli_handler = CLISimulator(
         #     os.path.join(os.path.dirname(os.path.abspath(__file__)), 'cli', 'simulator', 'data'),
@@ -316,4 +317,3 @@ class DriverCommands(DriverCommandsInterface):
 
     def set_speed_manual(self, src_port, dst_port, speed, duplex):
         return NotImplemented
-

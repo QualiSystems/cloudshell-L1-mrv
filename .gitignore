@@ -90,4 +90,8 @@ ENV/
 # Pycharm project settings
 .idea
 
-dependencies
+
+.DS_Store
+
+packages/
+

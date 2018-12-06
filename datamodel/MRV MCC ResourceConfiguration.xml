@@ -160,7 +160,7 @@
                     <AttributeValues/>
                     <ParentModels/>
                     <Drivers>
-                        <DriverName>MRV MCC GENERIC</DriverName>
+                        <DriverName>MRV</DriverName>
                     </Drivers>
                 </ResourceModel>
             </Models>
@@ -246,6 +246,6 @@
         </ResourceFamily>
     </ResourceFamilies>
     <DriverDescriptors>
-        <DriverDescriptor Name="MRV MCC GENERIC" DriverType="L1SwitchTclDriver" CustomParams="MRV_MCC_GENERIC.exe"/>
+        <DriverDescriptor Name="MRV" DriverType="L1SwitchTclDriver" CustomParams="mrv.exe"/>
     </DriverDescriptors>
 </ResourceManagementExportImport>
