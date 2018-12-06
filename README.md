@@ -1,7 +1,7 @@
 
 ![](cloudshell_logo.png)
 
-# **Mrv L1 Shell**
+# **MRV MCC L1 Shell**
 
 Release date: 04/12/2018 
 
@@ -29,37 +29,37 @@ L1 switch shells allow CloudShell to manage networking connectivity between phys
 
 For additional information, see the [L1 Switches](http://help.quali.com/Online%20Help/9.0/Portal/Content/Admn/Cnct-Ctrl-L1-Swch.htm?Highlight=L1%20switch) online help topic.
 
-### **Mrv L1 Shell**
-Mrv L1 Shell provides you with the capability to communicate with network topology managed by the Mrv.
+### **MRV MCC L1 Shell**
+MRV MCC L1 Shell provides you with the capability to communicate with network topology managed by the MRV MCC switch.
 
 The shell allows CloudShell users to interact with the device, for example, create and modify route mappings, get device information, and more.
 
 ### Standard version
-The Mrv L1 Shell is based on the [**Layer 1 Switch Shell Standard**](https://github.com/QualiSystems/shell-L1-template).
+The MRV MCC L1 Shell is based on the [**Layer 1 Switch Shell Standard**](https://github.com/QualiSystems/shell-L1-template).
 
 ### Requirements
 
-Release: **Mrv L1 Shell**
+Release: **MRV MCC L1 Shell**
 
-▪ CloudShell version: 8.0
+▪ CloudShell version: 8.0 and above
 
 ### Data Model
 
 The shell's data model includes all shell metadata, families, and attributes.
 
-#### **Mrv Families and Models**
+#### **MRV MCC Families and Models**
 
 The L1 switch families and models are listed in the following table:
 
 |Family|Model|Description|
 |:---|:---|:---|
-|L1 Switch|Mrv Chassis|L1 Switch Chassis|
+|L1 Switch|MRV Chassis|L1 Switch Chassis|
 |L1 Switch Blade|Generic L1 Module|Generic L1 Module|
 |L1 Switch Port|Generic L1 Port|Generic L1 Port|
 
-#### **Mrv Attributes**
+#### **MRV MCC Attributes**
 
-The Mrv Chassis attribute names and types are listed in the following table:
+The MRV Chassis attribute names and types are listed in the following table:
 
 |Attribute|Type|Description|
 |:---|:---|:---|
@@ -94,7 +94,7 @@ This section describes the automation (drivers) associated with the data model. 
 |Command|Description|
 |:-----|:-----|
 |Autoload|Discovers and creates the internal resources of the root resource (for example, switch cards and ports).|
-|MapBidi|Creates a bi-directional mapping between between two ports.|
+|MapBidi|Creates a bi-directional mapping between two ports.|
 |MapUni|Creates a uni-directional mapping between two ports.|
 |MapClear|Clears any connection ending in this port.|
 |MapClearTo|Clears a uni-directional connection between two ports.|
@@ -105,26 +105,26 @@ This section describes the automation (drivers) associated with the data model. 
 **Note:** You can only activate a TAP connection after activating a parent MapUni/MapBidi connection. 
 
 # Downloading the Shell
-The **Mrv** shell is available from the [Quali Community Integrations](https://community.quali.com/integrations) page. 
+The **MRV MCC** shell is available from the [Quali Community Integrations](https://community.quali.com/integrations) page. 
 
 The shell comprises:
 
 |File name|Description|
 |:---|:---|
-|cloudshell-L1-mrv-1.0.0.zip|Mrv L1 Shell package|
-|install_driver.bat|Mrv L1 Shell installation script|
-|mrv_runtime_config.yml|Mrv L1 Shell configuration file|
+|cloudshell-L1-mrv-1.0.0.zip|MRV MCC L1 shell package|
+|install_driver.bat|MRV MCC L1 shell installation script|
+|mrv_runtime_config.yml|MRV MCC L1 shell configuration file|
 |mrv_ResourceConfiguration.xml|XML file containing the resource structure, attributes and capabilities of the L1 switches of the same vendor|
 
 # Importing and Configuring the Shell
-This section describes how to import the **Mrv L1 Shell** and configure and modify the shell’s devices.
+This section describes how to import the L1 Shell and configure and modify the shell’s devices.
 
 ### Importing and configuring the shell in CloudShell
 
 **To import and configure the shell in CloudShell:**
   1. Make sure you have the shell’s zip package. If not, download the shell from the [Quali Community's Integrations](https://community.quali.com/integrations) page.
   
-  2. Extract the *mrv shell package zip* package to the following location on the Quali Server machine: 
+  2. Extract the *MRV MCC L1 shell zip* package to the following location on the Quali Server machine: 
   *C:\Program Files (x86)\QualiSystems\CloudShell\Server\Drivers*
   
   3. Run the *C:\Program Files (x86)\QualiSystems\CloudShell\Server\Drivers\cloudshell-L1-mrv\install_driver.bat* file.
@@ -138,7 +138,7 @@ This section describes how to import the **Mrv L1 Shell** and configure and modi
       1. In **Resource Explorer**, right-click **Root** and select **New>Resource**.
       2. Enter the **Name** and **Address**.
       3. Select the **L1 Switch** family.
-      4. Ensure that the correct **Model** Mrv Chassis and **Driver** MRV are selected.
+      4. Ensure that the correct **Model** MRV MCC Chassis and **Driver** MRV are selected.
       5. Click **OK**.
 	
   6. Auto Load the new resource.
