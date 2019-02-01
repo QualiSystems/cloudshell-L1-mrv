@@ -17,15 +17,17 @@ class TestCliContextManager(object):
 
 
 class TestCliService(CliService):
-    def __init__(self, data_path, logger):
+    def __init__(self, name, data_path, logger):
+        self.name = name
         self._data_path = data_path
         self._logger = logger
+        self.command_mode = None
 
     def reconnect(self, timeout=None):
         pass
 
     def enter_mode(self, command_mode):
-        pass
+        return TestCliContextManager(self)
 
     def send_command(self, command, expected_string=None, action_map=None, error_map=None, logger=None, *args,
                      **kwargs):
@@ -35,7 +37,7 @@ class TestCliService(CliService):
         file_name = re.sub('\"', '', file_name)
 
         try:
-            with open(os.path.join(self._data_path, file_name + '.txt'), 'r') as f:
+            with open(os.path.join(self._data_path, file_name + '_' + self.name + '.txt'), 'r') as f:
                 output = f.read()
             return output
         except IOError:
@@ -43,8 +45,8 @@ class TestCliService(CliService):
 
 
 class CLISimulator(L1CliHandler):
-    def __init__(self, data_path, logger):
-        self._cli_service = TestCliContextManager(TestCliService(data_path, logger))
+    def __init__(self, name, data_path, logger):
+        self._cli_service = TestCliContextManager(TestCliService(name, data_path, logger))
 
     def get_cli_service(self, command_mode):
         return self._cli_service
@@ -53,4 +55,7 @@ class CLISimulator(L1CliHandler):
         pass
 
     def default_mode_service(self):
+        return self._cli_service
+
+    def config_mode_service(self):
         return self._cli_service
