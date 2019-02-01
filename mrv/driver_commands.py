@@ -32,11 +32,11 @@ class DriverCommands(DriverCommandsInterface):
         """
         self._logger = logger
         self._runtime_config = runtime_config
-        # self._cli_handler = MrvCliHandler(self._logger)
-        self._cli_handler = CLISimulator('test',
-                                         os.path.join(os.path.dirname(os.path.abspath(__file__)), 'cli', 'simulator',
-                                                      'data'),
-                                         logger)
+        self._cli_handler = MrvCliHandler(self._logger)
+        # self._cli_handler = CLISimulator('test',
+        #                                  os.path.join(os.path.dirname(os.path.abspath(__file__)), 'cli', 'simulator',
+        #                                               'data'),
+        #                                  logger)
         self._ports_attributes_setters = {'Duplex': self._set_port_duplex,
                                           'Protocol': self._set_protocol,
                                           'Auto Negotiation': self._set_auto_neg}
