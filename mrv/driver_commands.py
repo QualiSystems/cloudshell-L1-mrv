@@ -3,6 +3,7 @@
 import os
 import re
 
+from cloudshell.cli.session.session_exceptions import CommandExecutionException
 from cloudshell.layer_one.core.driver_commands_interface import DriverCommandsInterface
 from cloudshell.layer_one.core.layer_one_driver_exception import LayerOneDriverException
 from cloudshell.layer_one.core.response.response_info import ResourceDescriptionResponseInfo, GetStateIdResponseInfo, \
@@ -31,10 +32,11 @@ class DriverCommands(DriverCommandsInterface):
         """
         self._logger = logger
         self._runtime_config = runtime_config
-        self._cli_handler = MrvCliHandler(self._logger)
-        # self._cli_handler = CLISimulator(
-        #     os.path.join(os.path.dirname(os.path.abspath(__file__)), 'cli', 'simulator', 'data'),
-        #     logger)
+        # self._cli_handler = MrvCliHandler(self._logger)
+        self._cli_handler = CLISimulator('test',
+                                         os.path.join(os.path.dirname(os.path.abspath(__file__)), 'cli', 'simulator',
+                                                      'data'),
+                                         logger)
         self._ports_attributes_setters = {'Duplex': self._set_port_duplex,
                                           'Protocol': self._set_protocol,
                                           'Auto Negotiation': self._set_auto_neg}
@@ -95,7 +97,10 @@ class DriverCommands(DriverCommandsInterface):
             state_id = self._state_flow.get_id()
             return GetStateIdResponseInfo(state_id)
         """
-        return GetStateIdResponseInfo(self._chassis_table[Address(1)].get('nbsCmmcChassisName'))
+        response_data = self._chassis_table[Address(1)].get('nbsCmmcChassisName')
+        if not response_data:
+            response_data = -1
+        return GetStateIdResponseInfo(response_data)
 
     def set_state_id(self, state_id):
         """
@@ -129,8 +134,13 @@ class DriverCommands(DriverCommandsInterface):
         """
         with self._cli_handler.config_mode_service() as session:
             mapping_actions = MappingActions(session, self._logger)
-            mapping_actions.map_bidi(Address.from_cs_address(src_port).build_str(),
-                                     Address.from_cs_address(dst_port).build_str())
+            try:
+                mapping_actions.map_bidi(Address.from_cs_address(src_port).build_str(),
+                                         Address.from_cs_address(dst_port).build_str())
+            except CommandExecutionException:
+                self._logger.debug('Using an old address format')
+                mapping_actions.map_bidi(Address.from_cs_address(src_port).build_str_no_dot(),
+                                         Address.from_cs_address(dst_port).build_str_no_dot())
 
     def map_uni(self, src_port, dst_ports):
         """

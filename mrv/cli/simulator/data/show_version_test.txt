@@ -1,0 +1,13 @@
+EM316LNXNM v4.3 mcc 03 (Aug 18 2008 - 08:34:26).
+U-Boot 1.0.3.2 (Aug 18 2008 - 08:15:31).
+Linux kernel v2.6.19.1 (#1 Mon Aug 18 08:08:11 PDT 2008).
+EM316LNXNM (firmware 5c.18) (00:20:1a:02:af:7b).
+MegaVisionJ not installed.
+Copyright (c) MRV Corp. 1993-2008
+fiberdriver#
+EM316LNXNM v4.3 mcc 03 (Aug 18 2008 - 08:34:26).
+U-Boot 1.0.3.2 (Aug 18 2008 - 08:15:31).
+Linux kernel v2.6.19.1 (#1 Mon Aug 18 08:08:11 PDT 2008).
+EM316LNXNM (firmware 5c.18) (00:20:1a:02:af:7b).
+MegaVisionJ not installed.
+Copyright (c) MRV Corp. 1993-2008
