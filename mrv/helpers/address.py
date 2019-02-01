@@ -22,6 +22,13 @@ class Address(object):
         """
         return '.'.join(self._address_indexes)
 
+    def build_str_no_dot(self):
+        """
+        Build address str
+        :rtype: str
+        """
+        return ''.join(self._address_indexes[:2]) + str(self._address_indexes[-1]).zfill(2)
+
     def get_chassis_address(self):
         """
         Related Chassis address
@@ -103,7 +110,7 @@ class Address(object):
         return not self == other
 
     def __str__(self):
-        return 'Address: ' + self.build_str()
+        return self.build_str()
 
     def __repr__(self):
         return self.__str__()
