@@ -1,56 +1,69 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
+
 import re
 
 from cloudshell.layer_one.core.response.resource_info.entities.blade import Blade
 from cloudshell.layer_one.core.response.resource_info.entities.chassis import Chassis
 from cloudshell.layer_one.core.response.resource_info.entities.port import Port
+
 from mrv.helpers.address import Address
 
 
-class ResourceDescription(object):
-    """MRV resource description builder"""
-    IGNORE_BLADES = ['EM316LNXNM-MCC']
+class ResourceDescription:
+    """MRV resource description builder."""
 
-    def __init__(self, address, chassis_table, slot_table, port_table, port_protocol_table):
+    IGNORE_BLADES = ["EM316LNXNM-MCC"]
+
+    def __init__(
+        self, address: str, chassis_table, slot_table, port_table, port_protocol_table
+    ) -> None:
         self._resource_address = address
         self._chassis_table = chassis_table
         self._slot_table = slot_table
         self._port_table = port_table
         self._port_protocol_table = port_protocol_table
 
-        self._mapping_table = {}
+        self._mapping_table: dict[Address, Address] = {}
 
     # Build Chassis
-    def _build_chassis(self):
-        """
-        Build chassis using data from chassis table
-        :return:
-        """
+    def _build_chassis(self) -> dict[str, Chassis]:
+        """Build chassis using data from chassis table."""
         chassis_dict = {}
-        for address, record in self._chassis_table.iteritems():
-            serial_number = record.get('nbsCmmcChassisSerialNum') or record.get('SerialNum')
-            chassis = Chassis(address.index(), self._resource_address, 'Generic MRV Chassis', serial_number)
-            chassis.set_model_name(record.get('nbsCmmcChassisModel') or record.get('Model'))
+        for address, record in self._chassis_table.items():
+            serial_number = record.get("nbsCmmcChassisSerialNum") or record.get(
+                "SerialNum"
+            )
+            chassis = Chassis(
+                address.index(),
+                self._resource_address,
+                "Generic MRV Chassis",
+                serial_number,
+            )
+            chassis.set_model_name(
+                record.get("nbsCmmcChassisModel") or record.get("Model")
+            )
             chassis.set_serial_number(serial_number)
             chassis.set_os_version(None)
             chassis_dict[address] = chassis
         return chassis_dict
 
     # Build blades
-    def _build_blades(self, chassis_dict):
-        """
-        Build blades using data from slot table
-        :param chassis_dict:
-        :return:
-        """
+    def _build_blades(self, chassis_dict: dict[str, Chassis]) -> dict[str, Blade]:
+        """Build blades using data from slot table."""
         blades_dict = {}
-        for address, record in self._slot_table.iteritems():
-            blade_model = record.get('nbsCmmcSlotModel') or record.get('Model')
-            serial_number = record.get('nbsCmmcSlotSerialNum') or record.get('SerialNum')
+        for address, record in self._slot_table.items():
+            blade_model = record.get("nbsCmmcSlotModel") or record.get("Model")
+            serial_number = record.get("nbsCmmcSlotSerialNum") or record.get(
+                "SerialNum"
+            )
             chassis = chassis_dict.get(address.get_chassis_address())
-            if chassis and blade_model and blade_model.lower() != 'n/a' and blade_model not in self.IGNORE_BLADES:
-                blade = Blade(address.index(), 'Generic L1 Module', serial_number)
+            if (
+                chassis
+                and blade_model
+                and blade_model.lower() != "n/a"
+                and blade_model not in self.IGNORE_BLADES
+            ):
+                blade = Blade(address.index(), "Generic L1 Module", serial_number)
                 blade.set_model_name(blade_model)
                 blade.set_serial_number(serial_number)
                 blades_dict[address] = blade
@@ -59,67 +72,83 @@ class ResourceDescription(object):
 
     # Build ports
     @staticmethod
-    def _port_mapping_address(data_dict):
-        chassis_id = data_dict.get('nbsCmmcPortZoneChassisOper') or data_dict.get('ZoneChassisOper')
-        if int(chassis_id) > 0:
-            slot_id = data_dict.get('nbsCmmcPortZoneSlotOper') or data_dict.get('ZoneSlotOper')
-            port_id = data_dict.get('nbsCmmcPortZoneIdOper') or data_dict.get('ZoneIdOper')
+    def _port_mapping_address(data_dict: dict[str, str]) -> Address | None:
+        chassis_id = data_dict.get("nbsCmmcPortZoneChassisOper") or data_dict.get(
+            "ZoneChassisOper"
+        )
+        if chassis_id and int(chassis_id) > 0:
+            slot_id = data_dict.get("nbsCmmcPortZoneSlotOper") or data_dict.get(
+                "ZoneSlotOper"
+            )
+            port_id = data_dict.get("nbsCmmcPortZoneIdOper") or data_dict.get(
+                "ZoneIdOper"
+            )
             port_mapping_address = Address(chassis_id, slot_id, port_id)
         else:
             port_mapping_address = None
         return port_mapping_address
 
-    def _set_port_attributes(self, port, record):
-        """
-        Set create attributes for a specific port
-        :param port:
-        :type port: cloudshell.layer_one.core.response.resource_info.entities.port.Port
-        :param record:
-        :type record: dict
-        :return:
-        """
+    def _set_port_attributes(self, port: Port, record: dict[str, str]) -> None:
+        """Set create attributes for a specific port."""
         # Model Name attribute
-        port.set_model_name(record.get('nbsCmmcPortName') or record.get('Name'))
+        port.set_model_name(record.get("nbsCmmcPortName") or record.get("Name"))
         # Protocol type and value attributes
-        proto_index = record.get('nbsCmmcPortProtoOper') or record.get('ProtoOper')
+        proto_index = record.get("nbsCmmcPortProtoOper") or record.get("ProtoOper")
         if proto_index in self._port_protocol_table:
-            protocol_rate = self._port_protocol_table[proto_index].get('nbsCmmcSysProtoRate') or \
-                            self._port_protocol_table[proto_index].get('Rate')
+            protocol_rate = self._port_protocol_table[proto_index].get(
+                "nbsCmmcSysProtoRate"
+            ) or self._port_protocol_table[proto_index].get("Rate")
             port.set_protocol_value(protocol_rate)
-            protocol_family = self._port_protocol_table[proto_index].get('nbsCmmcSysProtoFamily') or \
-                              self._port_protocol_table[proto_index].get('Family')
+            protocol_family = self._port_protocol_table[proto_index].get(
+                "nbsCmmcSysProtoFamily"
+            ) or self._port_protocol_table[proto_index].get("Family")
             port.set_protocol_type_value(protocol_family)
-        # Port duplex attribute
-        port.set_duplex(re.sub(r'notsupported|n/a', '', record.get('nbsCmmcPortDuplex') or record.get('Duplex') or '',
-                               flags=re.IGNORECASE))
-        # Auto negotiation attribute
-        _auto_negotiation_value = re.sub(r'notsupported|n/a', '',
-                                         record.get('nbsCmmcPortAutoNegotiation') or record.get(
-                                             'AutoNegotiation') or '',
-                                         flags=re.IGNORECASE)
-        if _auto_negotiation_value:
-            port.set_auto_negotiation(re.match(r'on|true', _auto_negotiation_value, flags=re.IGNORECASE) is not None)
-        # Port RxPower attribute
-        port.set_rx_power(record.get('nbsCmmcPortRxPower'))
-        # Port Tx Power attribute
-        port.set_tx_power(record.get('nbsCmmcPortTxPower'))
-        # Port speed attribute
-        port.set_port_speed(record.get('nbsCmmcPortSpeed') or record.get('Speed'))
-        # port wavelength attribute
-        port.set_wavelength(record.get('nbsCmmcPortWavelength') or record.get('Wavelength'))
 
-    def _build_ports(self, blades_dict):
-        """
-        Build port using data from port table
-        :param blades_dict:
-        :return:
-        """
+        # Port duplex attribute
+        port.set_duplex(
+            re.sub(
+                r"notsupported|n/a",
+                "",
+                record.get("nbsCmmcPortDuplex") or record.get("Duplex") or "",
+                flags=re.IGNORECASE,
+            )
+        )
+
+        # Auto negotiation attribute
+        _auto_negotiation_value = re.sub(
+            r"notsupported|n/a",
+            "",
+            record.get("nbsCmmcPortAutoNegotiation")
+            or record.get("AutoNegotiation")
+            or "",
+            flags=re.IGNORECASE,
+        )
+        if _auto_negotiation_value:
+            port.set_auto_negotiation(
+                re.match(r"on|true", _auto_negotiation_value, flags=re.IGNORECASE)
+                is not None
+            )
+        # Port RxPower attribute
+        port.set_rx_power(record.get("nbsCmmcPortRxPower"))
+        # Port Tx Power attribute
+        port.set_tx_power(record.get("nbsCmmcPortTxPower"))
+        # Port speed attribute
+        port.set_port_speed(record.get("nbsCmmcPortSpeed") or record.get("Speed"))
+        # port wavelength attribute
+        port.set_wavelength(
+            record.get("nbsCmmcPortWavelength") or record.get("Wavelength")
+        )
+
+    def _build_ports(self, blades_dict: dict[str, Blade]) -> dict[Address, Port]:
+        """Build port using data from port table."""
         ports_dict = {}
-        for address, record in self._port_table.iteritems():
+        for address, record in self._port_table.items():
             blade = blades_dict.get(address.get_slot_address())
             if blade:
-                serial_number = record.get('nbsCmmcPortSerialNumber') or record.get('SerialNumber')
-                port = Port(address.index(), 'Generic L1 Port', serial_number)
+                serial_number = record.get("nbsCmmcPortSerialNumber") or record.get(
+                    "SerialNumber"
+                )
+                port = Port(address.index(), "Generic L1 Port", serial_number)
                 self._set_port_attributes(port, record)
                 ports_dict[address] = port
                 port_mapping_address = self._port_mapping_address(record)
@@ -129,17 +158,15 @@ class ResourceDescription(object):
         return ports_dict
 
     # Mappings
-    def _build_ports_mappings(self, ports_dict):
-        for src_address, dst_address in self._mapping_table.iteritems():
+    def _build_ports_mappings(self, ports_dict: dict[Address, Port]) -> None:
+        for src_address, dst_address in self._mapping_table.items():
             src_port = ports_dict.get(src_address)
             dst_port = ports_dict.get(dst_address)
-            src_port.add_mapping(dst_port)
+            if src_port and dst_port:
+                src_port.add_mapping(dst_port)
 
     def build(self):
-        """
-        Build autoload structure
-        :return:
-        """
+        """Build autoload structure."""
         chassis_dict = self._build_chassis()
         blades_dict = self._build_blades(chassis_dict)
         ports_dict = self._build_ports(blades_dict)

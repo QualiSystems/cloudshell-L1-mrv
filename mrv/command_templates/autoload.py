@@ -1,15 +1,10 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
-from collections import OrderedDict
+from __future__ import annotations
 
 from cloudshell.cli.command_template.command_template import CommandTemplate
 
-ACTION_MAP = OrderedDict()
-ERROR_MAP = OrderedDict([(r'[Ee]rror:', 'Command error')])
+ERROR_MAP = {r"[Ee]rror:": "Command error"}
 
-CHASSIS_TABLE = CommandTemplate('show table chassis dump', ACTION_MAP, ERROR_MAP)
-SLOT_TABLE = CommandTemplate('show table slot dump', ACTION_MAP, ERROR_MAP)
-PORT_TABLE = CommandTemplate('show table port dump', ACTION_MAP, ERROR_MAP)
-PROTOCOL_TABLE = CommandTemplate('show table protocol dump', ACTION_MAP, ERROR_MAP)
-
+CHASSIS_TABLE = CommandTemplate("show table chassis dump", error_map=ERROR_MAP)
+SLOT_TABLE = CommandTemplate("show table slot dump", error_map=ERROR_MAP)
+PORT_TABLE = CommandTemplate("show table port dump", error_map=ERROR_MAP)
+PROTOCOL_TABLE = CommandTemplate("show table protocol dump", error_map=ERROR_MAP)

@@ -1,11 +1,12 @@
-from abc import ABCMeta, abstractmethod
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
 
 from mrv.helpers.address import Address
 
 
-class TableHelper(object):
-    """Associate addresses instances with table data"""
-    __metaclass__ = ABCMeta
+class TableHelper(ABC):
+    """Associate addresses instances with table data."""
 
     def __init__(self, table):
         self._table = table
@@ -13,18 +14,11 @@ class TableHelper(object):
     @staticmethod
     @abstractmethod
     def build_address(record):
-        """
-        Address for a specific entity
-        :param record:
-        :return:
-        """
+        """Address for a specific entity."""
         pass
 
     def address_dict(self):
-        """
-        Build dict of data with Address of entity as key
-        :return: 
-        """
+        """Build dict of data with Address of entity as key."""
         new_table = {}
         for record in self._table:
             address = self.build_address(record)
@@ -35,52 +29,44 @@ class TableHelper(object):
 class ChassisTableHelper(TableHelper):
     @staticmethod
     def build_address(record):
-        """
-        Chassis address
-        :param record:
-        :return:
-        """
-        index = record.get('nbsCmmcChassisIndex') or record.get('Index')
+        """Chassis address."""
+        index = record.get("nbsCmmcChassisIndex") or record.get("Index")
         return Address(index)
 
 
 class BladeTableHelper(TableHelper):
     @staticmethod
     def build_address(record):
-        """
-        Blade address
-        :param record:
-        :return:
-        """
-        chassis_index = record.get('nbsCmmcSlotChassisIndex') or record.get('ChassisIndex')
-        slot_index = record.get('nbsCmmcSlotIndex') or record.get('Index')
+        """Blade address."""
+        chassis_index = record.get("nbsCmmcSlotChassisIndex") or record.get(
+            "ChassisIndex"
+        )
+        slot_index = record.get("nbsCmmcSlotIndex") or record.get("Index")
         return Address(chassis_index, slot_index)
 
 
 class PortTableHelper(TableHelper):
     @staticmethod
     def build_address(record):
-        """
-        Port address
-        :param record:
-        :return:
-        """
-        chassis_index = record.get('nbsCmmcPortChassisIndex') or record.get('ChassisIndex')
-        slot_index = record.get('nbsCmmcPortSlotIndex') or record.get('SlotIndex')
-        index = record.get('nbsCmmcPortIndex') or record.get('Index')
-        return Address(chassis_index, slot_index,
-                       index)
+        """Port address."""
+        chassis_index = record.get("nbsCmmcPortChassisIndex") or record.get(
+            "ChassisIndex"
+        )
+        slot_index = record.get("nbsCmmcPortSlotIndex") or record.get("SlotIndex")
+        index = record.get("nbsCmmcPortIndex") or record.get("Index")
+        return Address(chassis_index, slot_index, index)
 
 
-class PortProtocolTableHelper(object):
-    """
-    Build protocol table
-    """
+class PortProtocolTableHelper:
+    """Build protocol table."""
+
     def __init__(self, protocol_table):
         self._protocol_table = protocol_table
 
     def index_dict(self):
         index_dict = {}
         for record in self._protocol_table:
-            index_dict[record.get('nbsCmmcSysProtoIndex') or record.get('Index')] = record
+            index_dict[
+                record.get("nbsCmmcSysProtoIndex") or record.get("Index")
+            ] = record
         return index_dict
