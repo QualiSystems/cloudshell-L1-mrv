@@ -6,6 +6,7 @@ from cloudshell.cli.service.cli import CLI
 from cloudshell.cli.service.session_pool_manager import SessionPoolManager
 from cloudshell.cli.session.ssh_session import SSHSession
 from cloudshell.cli.session.telnet_session import TelnetSession
+from cloudshell.layer_one.core.helper.logger import get_l1_logger
 from cloudshell.layer_one.core.helper.runtime_configuration import RuntimeConfiguration
 from cloudshell.layer_one.core.layer_one_driver_exception import LayerOneDriverException
 
@@ -14,6 +15,8 @@ if TYPE_CHECKING:
     from cloudshell.cli.service.session_pool_context_manager import (
         SessionPoolContextManager,
     )
+
+logger = get_l1_logger(name=__name__)
 
 
 class L1CliHandler:
@@ -63,4 +66,5 @@ class L1CliHandler:
             raise LayerOneDriverException(
                 "Cli Attributes is not defined, call Login command first"
             )
-        return self._cli.get_session(self._new_sessions(), command_mode)
+        # without a logger cli 6 logs to "cloudshell_cli", which no file handler sees
+        return self._cli.get_session(self._new_sessions(), command_mode, logger)

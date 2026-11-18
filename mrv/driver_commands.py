@@ -232,4 +232,6 @@ class DriverCommands(DriverCommandsInterface):
     def set_speed_manual(
         self, src_port: str, dst_port: str, speed: str, duplex: str
     ) -> None:
-        raise NotImplementedError
+        # 2.x answered success without touching the device; CloudShell may send it
+        # during route setup, so failing here would break connections
+        return None

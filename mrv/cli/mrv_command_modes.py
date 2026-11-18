@@ -59,7 +59,11 @@ class ConfigCommandMode(CommandMode):
         )
 
     def enter_action_map(self):
-        return {r"[Pp]assword": lambda session: session.send_line(session.password)}
+        return {
+            r"[Pp]assword": lambda session, logger: session.send_line(
+                session.password, logger
+            )
+        }
 
     def enter_error_map(self):
         return {r"[Ee]rror:": "Command error"}
@@ -90,7 +94,11 @@ class ConfigChassisCommandMode(CommandMode):
         )
 
     def enter_action_map(self):
-        return {r"[Pp]assword": lambda session: session.send_line(session.password)}
+        return {
+            r"[Pp]assword": lambda session, logger: session.send_line(
+                session.password, logger
+            )
+        }
 
     def enter_error_map(self):
         return {
@@ -134,7 +142,11 @@ class ConfigPortCommandMode(CommandMode):
         )
 
     def enter_action_map(self):
-        return {r"[Pp]assword": lambda session: session.send_line(session.password)}
+        return {
+            r"[Pp]assword": lambda session, logger: session.send_line(
+                session.password, logger
+            )
+        }
 
     def enter_error_map(self):
         return {
