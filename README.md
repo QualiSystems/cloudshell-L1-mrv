@@ -3,9 +3,9 @@
 
 # **MRV MCC L1 Shell**
 
-Release date: 01/02/2019 
+Release date: 11/18/2026 
 
-Shell version: 2.0.3
+Shell version: 3.0.0
 
 Document version: 1.0
 
@@ -41,7 +41,9 @@ The MRV MCC L1 Shell is based on the [**Layer 1 Switch Shell Standard**](https:/
 
 Release: **MRV MCC L1 Shell**
 
-▪ CloudShell version: 8.0 and above
+▪ CloudShell version: 2026.1 and above (runs on the server's bundled Python 3.13 x64; the offline packages are built for it)
+
+▪ For CloudShell versions with Python 2.7 only, use shell version 2.0.6
 
 ### Data Model
 

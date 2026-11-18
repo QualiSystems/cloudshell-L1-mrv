@@ -16,7 +16,7 @@ if exist %LIB_FOLDER% rd /s /q %LIB_FOLDER%
 if exist %SCRIPTS_FOLDER% rd /s /q %SCRIPTS_FOLDER%
 if exist %TCL_FOLDER% rd /s /q %TCL_FOLDER%
 
-set QS_PYTHON_REGEXP="^2.*"
+set QS_PYTHON_REGEXP="^3.*"
 set QS_PYTHON=%1
 
 if not defined QS_PYTHON (
@@ -37,3 +37,4 @@ if exist %PACKAGES% %DRIVER_PYTHON% -m pip install -r "%DRIVER_FOLDER%\requireme
 if not exist %PACKAGES% %DRIVER_PYTHON% -m pip install -r "%DRIVER_FOLDER%\requirements.txt"
 copy "%DRIVER_FOLDER%\driver_exe_template" "%DRIVER_FOLDER%\..\%DRIVER_NAME%.exe"
 endlocal
+
